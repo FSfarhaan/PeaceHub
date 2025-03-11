@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depression Assessment</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .radio-group {
+            margin-bottom: 20px;
+            background-color: #e7f3fe;
+            border: 1px solid #b8e0f8;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #4caf50; /* Custom color for radio button */
+        }
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 600px) {
+            form {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Depression Assessment</h1>
+    <form method="post">
+        {% for i in range(1, 21) %}
+            <label>Q{{ i }}: {{ questions[i-1] }}</label>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="Q{{ i }}" value="0" required> Not at all
+                </label>
+                <label>
+                    <input type="radio" name="Q{{ i }}" value="1"> Several days
+                </label>
+                <label>
+                    <input type="radio" name="Q{{ i }}" value="2"> More than half the days
+                </label>
+                <label>
+                    <input type="radio" name="Q{{ i }}" value="3"> Nearly every day
+                </label>
+            </div>
+        {% endfor %}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+
