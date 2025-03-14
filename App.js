@@ -16,6 +16,8 @@ import Profile from './src/screens/sideDrawer/Profile';
 import Settings from './src/screens/sideDrawer/Settings';
 import { NavigationContainer } from '@react-navigation/native';
 import MusicPlayerScreen from './src/screens/bottomNavigation/sounds/MusicPlayer';
+import { useEffect } from 'react';
+import { getPushToken, setupNotificationHandlers } from './src/utils/Notifications';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -29,6 +31,16 @@ const DrawerToggle = ({ navigation }) => (
 
 // ✅ Bottom Tabs with Drawer Button in Header
 function BottomTabs({ navigation }) {
+  useEffect(()=> {
+    async function setup() {
+      setupNotificationHandlers();
+      const token = await getPushToken();
+      if (token) {
+        Alert.alert('Push Token', token); // Save this in your backend
+      }
+    }
+    setup();
+  }, [])
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
