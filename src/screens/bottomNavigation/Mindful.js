@@ -190,6 +190,11 @@ const Mindful = () => {
         style={styles.container}>
 
         <ScrollView style={styles.scrollView}>
+          <View style={styles.greetingContainer}>
+            <Text style={styles.greetingText}>Track Your Journey ✨</Text>
+            <Text style={styles.subGreetingText}>Take a moment to reflect today</Text>
+          </View>
+
           {/* Calendar Section */}
           <View style={styles.calendarContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -253,7 +258,7 @@ const Mindful = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f8',
+    backgroundColor: '#F8F8F8',
   },
   header: {
     flexDirection: 'row',
@@ -270,6 +275,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#333'
+  },
+  greetingContainer: {
+    marginTop: 25,
+    paddingHorizontal: 20,
+  },
+  greetingText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#3F414E',
+  },
+  subGreetingText: {
+    fontSize: 16,
+    color: '#A1A4B2',
+    marginTop: 5,
+    marginBottom: 20
   },
   scrollView: {
     flex: 1,
@@ -328,8 +348,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
     borderRadius: 15,
     backgroundColor: '#fff',
-    borderBlockColor: '#000',
-    borderWidth: .2
+    borderBlockColor: '#333',
+    borderWidth: .1
     // shadowColor: '#000',
     // shadowOffset: { width: 0, height: 1 },
     // shadowOpacity: 0.1,
@@ -369,8 +389,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 15,
     padding: 16,
-    borderWidth: .2,
-    borderBlockColor: "#000"
+    borderWidth: .1,
+    borderBlockColor: "#333"
   },
   journalInput: {
     minHeight: 150,
@@ -382,8 +402,8 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: '#6366f1',
-    borderRadius: 15,
+    backgroundColor: '#8E67FD',
+    borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     shadowColor: '#6366f1',
@@ -394,7 +414,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
 });

@@ -172,9 +172,9 @@ const Explore = () => {
     <SafeAreaView style={styles.container}>
       
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={{ padding: 20 }}>
-            <Text style={styles.greetingText}>Find Your Tribe</Text>
-            <Text style={styles.subGreetingText}>Connect, share, and grow together</Text>
+        <View style={{ padding: 20, paddingTop: 25 }}>
+            <Text style={styles.greetingText}>Find Your Tribe 🤝🏻</Text>
+            <Text style={styles.subGreetingText}>You’re never alone on this journey</Text>
         </View>
         {/* Categories */}
         <ScrollView 
@@ -188,7 +188,7 @@ const Explore = () => {
         
         {/* Articles Section */}
         <View style={{ padding: 20, paddingTop: 10}}>
-            <Text style={styles.greetingText}>Explore & Learn</Text>
+            <Text style={styles.greetingText}>Explore & Learn 📚</Text>
             <Text style={styles.subGreetingText}>Read articles that inspire growth</Text>
         </View>
         
@@ -205,7 +205,7 @@ const Explore = () => {
 
         <View style={[styles.sectionHeader, {marginTop: 10}]}>
             <View>
-                <Text style={styles.greetingText}>Find Your Calm</Text>
+                <Text style={styles.greetingText}>Find Your Calm 🎧</Text>
                 <Text style={styles.subGreetingText}>Let nature soothe your mind</Text>
             </View>
             <TouchableOpacity>
@@ -299,8 +299,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   scrollView: {
-    flex: 1,
-    paddingTop: 10
+    flex: 1
   },
   categoriesScrollView: {
     marginBottom: 20,
@@ -317,6 +316,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginRight: 10,
     justifyContent: 'space-between',
+    borderWidth: .1,
+    borderColor: "#333"
   },
   categoryImage: {
     width: '100%',
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
     marginRight: 15,
-    borderWidth: .3,
+    borderWidth: .1,
     borderColor: "#333"
   },
   articleImageContainer: {
@@ -406,7 +407,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   cardButton: {
-    backgroundColor: 'rgba(70, 200, 255, 0.5)',
+    backgroundColor: '#EAD7FF',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
@@ -428,11 +429,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    borderWidth: .1,
+    borderColor: "#333"
   },
   soundCardLeft: {
     flexDirection: 'row',

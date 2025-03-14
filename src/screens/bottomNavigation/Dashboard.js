@@ -1,50 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 // import { LinearGradient } from 'expo-linear-gradient';
 
 const Dashboard = () => {
+  const [progress, setProgress] = useState({ completed: 0, total: 3 });
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+      <ScrollView>
         {/* Greeting */}
         <View style={styles.greetingContainer}>
-          <Text style={styles.greetingText}>Good Morning, Farhaan</Text>
+          <Text style={styles.greetingText}>Welcome Back, Farhaan 👋🏻</Text>
           <Text style={styles.subGreetingText}>We wish you have a good day</Text>
+        </View>
+
+        <View style={{ paddingHorizontal: 20 }}>
+          <TouchableOpacity style={styles.card}>
+            {/* App Icon */}
+            <Image source={require("../../../assets/dash1.jpg")} style={styles.icon} />
+
+            {/* Task Details */}
+            <View style={styles.details}>
+              <View style={styles.row}>
+              <Text style={styles.title}>Daily Tasks Completed</Text>
+                <View style={styles.progressContainer}>
+                  <View style={styles.dot} />
+                  <Text style={styles.progress}>{progress.completed} / {progress.total}</Text>
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Main Cards Section */}
         <View style={styles.cardsContainer}>
           {/* First Card - Basics */}
-          <TouchableOpacity style={[styles.cardLarge, {backgroundColor: '#8E97FD'}]}>
-            <Image 
-              source={require('../../../assets/icon.png')} 
-              style={styles.cardImage} 
+          <TouchableOpacity style={[styles.cardLarge, { backgroundColor: '#8E97FD' }]}>
+            <Image
+              source={require('../../../assets/comm.png')}
+              style={styles.cardImage}
               resizeMode="contain"
             />
             <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>Basics</Text>
-              <Text style={styles.cardSubtitle}>COURSE</Text>
+              <Text style={styles.cardTitle}>Communities</Text>
+              {/* <Text style={styles.cardSubtitle}>COURSE</Text> */}
               <View style={styles.cardButtonContainer}>
                 <TouchableOpacity style={styles.cardButton}>
-                  <Text style={styles.cardButtonText}>START</Text>
+                  <Text style={styles.cardButtonText}>Explore</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </TouchableOpacity>
 
           {/* Second Card - Relaxation */}
-          <TouchableOpacity style={[styles.cardLarge, {backgroundColor: '#FFC97E'}]}>
-            <Image 
-              source={require('../../../assets/icon.png')} 
-              style={styles.cardImage} 
+          <TouchableOpacity style={[styles.cardLarge, { backgroundColor: '#D473D4' }]}>
+            <Image
+              source={require('../../../assets/art.png')}
+              style={styles.cardImage}
               resizeMode="contain"
             />
             <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>Relaxation</Text>
-              <Text style={styles.cardSubtitle}>MUSIC</Text>
+              <Text style={styles.cardTitle}>Articles</Text>
+              {/* <Text style={styles.cardSubtitle}>MUSIC</Text> */}
               <View style={styles.cardButtonContainer}>
                 <TouchableOpacity style={styles.cardButton}>
-                  <Text style={styles.cardButtonText}>START</Text>
+                  <Text style={styles.cardButtonText}>Explore</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -54,8 +73,8 @@ const Dashboard = () => {
         {/* Daily Thought Section */}
         <TouchableOpacity style={styles.dailyThoughtContainer}>
           <View style={styles.dailyThoughtContent}>
-            <Text style={styles.dailyThoughtTitle}>Daily Thought</Text>
-            <Text style={styles.dailyThoughtSubtitle}>MEDITATION • 3-10 MIN</Text>
+            <Text style={styles.dailyThoughtTitle}>Calming sounds</Text>
+            <Text style={styles.dailyThoughtSubtitle}>RAIN FOREST • 2 MINS</Text>
           </View>
           <View style={styles.playButtonContainer}>
             <TouchableOpacity style={styles.playButton}>
@@ -70,9 +89,9 @@ const Dashboard = () => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.recommendedScroll}>
             {/* Focus Card */}
             <TouchableOpacity style={styles.recommendedCard}>
-              <Image 
-                source={require('../../../assets/icon.png')} 
-                style={styles.recommendedCardImage} 
+              <Image
+                source={require('../../../assets/icon.png')}
+                style={styles.recommendedCardImage}
                 resizeMode="cover"
               />
               <Text style={styles.recommendedCardTitle}>Focus</Text>
@@ -83,9 +102,9 @@ const Dashboard = () => {
 
             {/* Happiness Card */}
             <TouchableOpacity style={styles.recommendedCard}>
-              <Image 
-                source={require('../../../assets/icon.png')} 
-                style={styles.recommendedCardImage} 
+              <Image
+                source={require('../../../assets/icon.png')}
+                style={styles.recommendedCardImage}
                 resizeMode="cover"
               />
               <Text style={styles.recommendedCardTitle}>Happiness</Text>
@@ -96,9 +115,9 @@ const Dashboard = () => {
 
             {/* Partial Third Card */}
             <TouchableOpacity style={styles.recommendedCard}>
-              <Image 
-                source={require('../../../assets/icon.png')} 
-                style={styles.recommendedCardImage} 
+              <Image
+                source={require('../../../assets/icon.png')}
+                style={styles.recommendedCardImage}
                 resizeMode="cover"
               />
               <Text style={styles.recommendedCardTitle}>For You</Text>
@@ -111,7 +130,8 @@ const Dashboard = () => {
 
         {/* Space for bottom navigation (not included as requested) */}
         <View style={styles.bottomSpace} />
-      </View>
+      </ScrollView>
+
     </SafeAreaView>
   );
 };
@@ -119,7 +139,67 @@ const Dashboard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F8F8',
+  },
+  card: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    padding: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    borderWidth: .1, 
+    borderColor: "#333",
+    marginTop: 20
+  },
+  icon: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+  },
+  details: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  tag: {
+    backgroundColor: "#EAEFFD",
+    color: "#3B82F6",
+    fontSize: 12,
+    fontWeight: "500",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  date: {
+    fontSize: 12,
+    color: "#777",
+    marginLeft: 8,
+  },
+  progressContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: "auto",
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "green",
+    marginRight: 4,
+  },
+  progress: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#333",
   },
   header: {
     flexDirection: 'row',
@@ -143,7 +223,7 @@ const styles = StyleSheet.create({
     color: '#3F414E',
   },
   greetingContainer: {
-    marginTop: 30,
+    marginTop: 25,
     paddingHorizontal: 20,
   },
   greetingText: {
@@ -166,16 +246,16 @@ const styles = StyleSheet.create({
     width: '48%',
     height: 210,
     borderRadius: 10,
-    padding: 15,
+    paddingHorizontal: 7,
     justifyContent: 'space-between',
     overflow: 'hidden',
   },
   cardImage: {
-    position: 'absolute',
-    right: -10,
-    bottom: 20,
-    width: 90,
-    height: 140,
+    // position: 'absolute',
+    // right: -10,
+    // bottom: 20,
+    width: "100%",
+    height: 120,
   },
   cardContent: {
     flex: 1,
@@ -185,7 +265,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginTop: 10,
+    // marginTop: 10,
   },
   cardSubtitle: {
     fontSize: 12,
@@ -213,7 +293,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 20,
     padding: 15,
-    backgroundColor: '#333242',
+    backgroundColor: '#3D2C3D',
     borderRadius: 10,
     height: 95,
   },
