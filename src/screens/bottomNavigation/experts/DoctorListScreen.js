@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { doctorsData } from '../data/doctorsData';
-import DoctorListCard from '../components/DoctorListCard';
+import { doctorsData } from '../../../data/doctorsData';
+import DoctorListCard from '../../../components/DoctorListCard';
 
 const DoctorListScreen = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState('Medicine Specialist');
@@ -22,7 +22,7 @@ const DoctorListScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
@@ -30,7 +30,7 @@ const DoctorListScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.moreButton}>
           <Ionicons name="ellipsis-vertical" size={24} color="#000" />
         </TouchableOpacity>
-      </View>
+      </View> */}
       
       {/* Category filter buttons */}
       <ScrollView 

@@ -34,7 +34,7 @@ const Dashboard = () => {
         {/* Main Cards Section */}
         <View style={styles.cardsContainer}>
           {/* First Card - Basics */}
-          <TouchableOpacity style={[styles.cardLarge, { backgroundColor: '#8E97FD' }]}>
+          <TouchableOpacity style={[styles.cardLarge, { backgroundColor: '#8E67FD' }]}>
             <Image
               source={require('../../../assets/comm.png')}
               style={styles.cardImage}

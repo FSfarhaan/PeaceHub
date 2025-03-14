@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { doctorsData } from '../data/doctorsData';
+import { doctorsData } from '../../../data/doctorsData';
 
 const DoctorProfileScreen = ({ route, navigation }) => {
   const { doctorId } = route.params;
@@ -27,7 +27,7 @@ const DoctorProfileScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
@@ -35,7 +35,7 @@ const DoctorProfileScreen = ({ route, navigation }) => {
         <TouchableOpacity style={styles.moreButton}>
           <Ionicons name="ellipsis-vertical" size={24} color="#000" />
         </TouchableOpacity>
-      </View>
+      </View> */}
       
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
@@ -45,19 +45,19 @@ const DoctorProfileScreen = ({ route, navigation }) => {
               style={styles.profileImage} 
             />
             <View style={styles.doctorInfo}>
-              <Text style={styles.doctorName}>Dr. Sumatra Sumi</Text>
-              <Text style={styles.specialization}>Medicine Specialist</Text>
-              <Text style={styles.college}>MBBS / FCPS (BD)</Text>
+              <Text style={styles.doctorName}>{doctor.name}</Text>
+              <Text style={styles.specialization}>{doctor.specialization}</Text>
+              <Text style={styles.college}>{doctor.college}</Text>
               
               <View style={styles.contactButtons}>
                 <TouchableOpacity style={styles.contactButton}>
-                  <Ionicons name="call" size={20} color="#4FADFF" />
+                  <Ionicons name="call" size={20} color="#8E67FD" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.contactButton}>
-                  <Ionicons name="videocam" size={20} color="#4FADFF" />
+                  <Ionicons name="videocam" size={20} color="#8E67FD" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.contactButton}>
-                  <Ionicons name="chatbubble" size={20} color="#4FADFF" />
+                  <Ionicons name="chatbubble" size={20} color="#8E67FD" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -65,15 +65,15 @@ const DoctorProfileScreen = ({ route, navigation }) => {
           
           <View style={styles.infoContainer}>
             <View style={styles.infoItem}>
-              <Text style={styles.infoValue}>3.08k+</Text>
+              <Text style={styles.infoValue}>{doctor.patients}</Text>
               <Text style={styles.infoLabel}>Patients</Text>
             </View>
             <View style={styles.infoItem}>
-              <Text style={styles.infoValue}>5+ Years</Text>
+              <Text style={styles.infoValue}>{doctor.experience}</Text>
               <Text style={styles.infoLabel}>Experience</Text>
             </View>
             <View style={styles.infoItem}>
-              <Text style={styles.infoValue}>2.00 K</Text>
+              <Text style={styles.infoValue}>{doctor.reviews}</Text>
               <Text style={styles.infoLabel}>Review</Text>
             </View>
           </View>
@@ -196,16 +196,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F9FA',
     borderRadius: 20,
     marginHorizontal: 20,
     marginVertical: 10,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    padding: 7
   },
   profileHeader: {
     flexDirection: 'row',
@@ -241,7 +236,7 @@ const styles = StyleSheet.create({
   },
   contactButton: {
     marginRight: 12,
-    backgroundColor: '#F0F8FF',
+    backgroundColor: '#EDE7F6',
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -291,7 +286,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
   },
   timeSlotSelected: {
-    backgroundColor: '#4FADFF',
+    backgroundColor: '#8E67FD',
   },
   timeSlotText: {
     fontSize: 14,
@@ -316,7 +311,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   dayItemSelected: {
-    backgroundColor: '#4FADFF',
+    backgroundColor: '#8E67FD',
   },
   dayText: {
     fontSize: 14,
@@ -346,7 +341,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
   },
   appointmentTypeSelected: {
-    backgroundColor: '#4FADFF',
+    backgroundColor: '#8E67FD',
   },
   appointmentTypeText: {
     fontSize: 14,
@@ -372,7 +367,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   bookButton: {
-    backgroundColor: '#4FADFF',
+    backgroundColor: '#8E67FD',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 25,

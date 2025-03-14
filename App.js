@@ -10,6 +10,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Dashboard from './src/screens/bottomNavigation/Dashboard';
 import Explore from './src/screens/bottomNavigation/Explore';
 import Experts from './src/screens/bottomNavigation/Experts';
+import DoctorListScreen from './src/screens/bottomNavigation/experts/DoctorListScreen';
+import DoctorProfileScreen from './src/screens/bottomNavigation/experts/DoctorProfileScreen';
 import Mindful from './src/screens/bottomNavigation/Mindful';
 import Reports from './src/screens/bottomNavigation/Reports';
 import Profile from './src/screens/sideDrawer/Profile';
@@ -31,16 +33,18 @@ const DrawerToggle = ({ navigation }) => (
 
 // ✅ Bottom Tabs with Drawer Button in Header
 function BottomTabs({ navigation }) {
-  useEffect(()=> {
-    async function setup() {
-      setupNotificationHandlers();
-      const token = await getPushToken();
-      if (token) {
-        Alert.alert('Push Token', token); // Save this in your backend
-      }
-    }
-    setup();
-  }, [])
+
+  // useEffect(()=> {
+  //   async function setup() {
+  //     setupNotificationHandlers();
+  //     const token = await getPushToken();
+  //     if (token) {
+  //       Alert.alert('Push Token', token); // Save this in your backend
+  //     }
+  //   }
+  //   setup();
+  // }, [])
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -104,9 +108,19 @@ function StackNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Home" component={BottomTabs} options={{ headerShown: false }} />
       <Stack.Screen name="MusicPlayer" component={MusicPlayerScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Doctors List" component={DoctorListScreen} />
+      <Stack.Screen name="Doctor Profile" component={DoctorProfileScreen} />
     </Stack.Navigator>
   );
 }
+
+// const ExpertStack = () => {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="Expert" component={Experts} />
+//     </Stack.Navigator>
+//   );
+// };
 
 export default function App() {
   return (

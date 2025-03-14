@@ -5,8 +5,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
-import DoctorListScreen from '../screens/DoctorListScreen';
-import DoctorProfileScreen from '../screens/DoctorProfileScreen';
+import DoctorListScreen from '../../../src/screens/bottomNavigation/experts/DoctorListScreen';
+import DoctorProfileScreen from '../../../src/screens/bottomNavigation/experts/DoctorProfileScreen';
 import SearchScreen from '../screens/SearchScreen';
 import AppointmentsScreen from '../screens/AppointmentsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -26,18 +26,18 @@ const HomeStack = () => {
   );
 };
 
-// Search Stack
-const SearchStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="SearchScreen" component={SearchScreen} />
-      <Stack.Screen name="DoctorList" component={DoctorListScreen} />
-      <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
-    </Stack.Navigator>
-  );
-};
+// // Search Stack
+// const SearchStack = () => {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="SearchScreen" component={SearchScreen} />
+//       <Stack.Screen name="DoctorList" component={DoctorListScreen} />
+//       <Stack.Screen name="DoctorProfile" component={DoctorProfileScreen} />
+//     </Stack.Navigator>
+//   );
+// };
 
-// Appointments Stack
+// // Appointments Stack
 const AppointmentsStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -47,14 +47,14 @@ const AppointmentsStack = () => {
   );
 };
 
-// Profile Stack
-const ProfileStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-    </Stack.Navigator>
-  );
-};
+// // Profile Stack
+// const ProfileStack = () => {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+//     </Stack.Navigator>
+//   );
+// };
 
 const MainTabNavigator = () => {
   return (
