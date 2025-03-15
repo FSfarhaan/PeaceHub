@@ -13,14 +13,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import DoctorList from "../components/DoctorsList";
+import axios from "axios";
 
 const ChatScreen = () => {
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([
-    { id: "1", text: "Hello Farhaan 👋 I'm Chatbot Max", sender: "bot" },
-    { id: "2", text: "How are you?", sender: "bot" },
-    { id: "3", text: "Hi, Max! I'm fine", sender: "user" },
-    { id: "4", text: "What can I do for you today?", sender: "bot" }
+    { id: "1", text: "Hello Farhaan 👋 I'm your friend peace hub", sender: "bot" },
+    { id: "2", text: "What can I do for you today?", sender: "bot" }
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -77,25 +76,36 @@ const ChatScreen = () => {
     },
   ];
 
+  const cleanText = (text) => {
+    return text
+      .replace(/\t+/g, " ")    // Tabs to spaces
+      .replace(/\s+/g, " ")    // Collapse all whitespace to single space
+      .replace(/\n{2,}/g, "\n"); // Remove excessive new lines
+  };
+
   // This function would connect to your Python backend
   const sendMessageToBackend = async (userMessage) => {
     try {
-      // Replace with your actual API endpoint
-      const response = await fetch("http://your-python-backend/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: userMessage }),
-      });
-
-      const data = await response.json();
-      return data.response;
+      const response = await axios.post("http://192.168.237.209:8000/chat/",
+        {
+          session_id: "1234",
+          user_input: userMessage
+        }, 
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      console.log(response.data.response);
+      return cleanText(response.data.response);
     } catch (error) {
       console.error("Error communicating with backend:", error);
       return "Sorry, I couldn't process your request right now.";
     }
   };
+  
 
   const handleSend = async () => {
     if (message.trim() === "") return;
@@ -109,25 +119,19 @@ const ChatScreen = () => {
 
     const userMessageText = message;
     setMessage("");
-    // setIsLoading(true);
+    setIsLoading(true);
 
     // Simulate backend response (replace with actual API call)
     // Uncomment the line below and comment out the setTimeout when connecting to real backend
-    // const botResponse = await sendMessageToBackend(userMessageText);
+    const botResponse = await sendMessageToBackend(userMessageText);
 
-    const text =
-      "Some sentence which definitely should be meaningful because it will come from an actual python backend. Currently some placeholder text is placed to simulate the response.";
+    // const text =
+    //   "Some sentence which definitely should be meaningful because it will come from an actual python backend. Currently some placeholder 
+    // text is placed to simulate the response.";
+
+
     setIsTyping(true);
-    setResponseText(text.split(" "));
-
-    // setTimeout(() => {
-    //     const botMessageId = (Date.now() + 1).toString();
-    //     setChatHistory(prevHistory => [
-    //         ...prevHistory,
-    //         { id: botMessageId, text: text, sender: 'bot' }
-    //     ]);
-    //     // setIsLoading(false);
-    // }, 2000);
+    setResponseText(botResponse.trim().split(/\s+/).filter(word => word !== ''));
   };
 
   const handleDoctor = () => {
@@ -232,18 +236,27 @@ const ChatScreen = () => {
     setVisibleWords([]);
 
     let i = 0;
+    const totalWords = responseText.length;
 
     const interval = setInterval(() => {
-      setVisibleWords((prev) => [...prev, responseText[i]]);
+      setVisibleWords((prev) => {
+        if (i >= totalWords) return prev;
+        const newWords = [...prev, responseText[i]];
 
-      Animated.timing(fadeAnimations.current[i], {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
+        Animated.timing(fadeAnimations.current[i], {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
 
-      i++;
-      if (i >= responseText.length) {
+        i++;
+        return newWords;
+      });
+
+      
+
+      // i++;
+      if (i >= totalWords) {
         clearInterval(interval);
 
         setTimeout(() => {
@@ -265,28 +278,14 @@ const ChatScreen = () => {
       flatListRef.current?.scrollToEnd({ animated: true });
     }, 100);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      fadeAnimations.current = []; // Prevent memory leaks
+    };
   }, [responseText]);
-
-  // useEffect(() => {
-  //     if (!isTyping && visibleWords.length > 0) {
-  //         // setChatHistory(prev => [
-  //         //     ...prev,
-  //         //     { id: (Date.now() + 1).toString(), text: visibleWords.join(' '), sender: 'bot' }
-  //         // ]);
-  //         setVisibleWords([]);  // Clear only after adding to chatHistory
-  //         setResponseText([]);
-  //     }
-  //  }, [isTyping]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={{ uri: "https://via.placeholder.com/40" }}
-          style={styles.avatar}
-        />
-      </View>
 
       <FlatList
         ref={flatListRef}
@@ -333,7 +332,7 @@ const ChatScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <ScrollView
+        {/* <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.tabContainer}
@@ -357,9 +356,9 @@ const ChatScreen = () => {
               <Text style={styles.tabName}>{tab.name}</Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+        </ScrollView> */}
       </Animated.View>
-
+{/* 
       {
         <Animated.View
           style={{
@@ -370,7 +369,7 @@ const ChatScreen = () => {
         >
           <DoctorList onClose={onClose} handleSchedule={handleSchedule} />
         </Animated.View>
-      }
+      } */}
     </SafeAreaView>
   );
 };

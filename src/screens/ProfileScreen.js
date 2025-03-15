@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import profilepic from '../../assets/images/profilepic.jpg';
+import profilepic from '../../assets/images/profile.jpeg';
+import { useNavigation } from '@react-navigation/native';
 
 
 const UserProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('appointments');
+  const navigation = useNavigation();
 
   const user = {
-    name: 'Jacob Jones',
-    email: 'jacob.jones@example.com',
-    phone: '+1 234 567 8901',
+    name: 'Farhaan Shaikh',
+    email: 'farhaan8d@gmail.com',
+    phone: '+91 7021177410',
     profileImage: profilepic,
     upcomingAppointments: [
-      { id: 1, doctor: 'Dr Sumaira Sumi', specialty: 'Medicine', date: 'Mar 15, 2025', time: '10:30 AM' },
-      { id: 2, doctor: 'Dr Masruk Farhan', specialty: 'Cardiology', date: 'Mar 22, 2025', time: '2:00 PM' }
+      { id: 1, doctor: 'Dr Bhoomi Singh', specialty: 'Psychologist', date: 'Mar 19, 2025', time: '10:00 AM' }
     ]
   };
+
+  const handleLogOut = () => {
+    navigation.navigate("LoginScreen");
+  }
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -50,11 +55,11 @@ const UserProfileScreen = () => {
       case 'medical':
         return (
           <View style={styles.tabContent}>
-            <Text style={styles.sectionTitle}>Medical Records</Text>
+            <Text style={styles.sectionTitle}>Records</Text>
             <TouchableOpacity style={styles.recordCard}>
               <Icon name="file-document-outline" size={24} color="#6979F8" />
               <View style={styles.recordInfo}>
-                <Text style={styles.recordTitle}>Blood Test Results</Text>
+                <Text style={styles.recordTitle}>Week 1 reports</Text>
                 <Text style={styles.recordDate}>Feb 28, 2025</Text>
               </View>
               <Icon name="chevron-right" size={24} color="#BDBDBD" />
@@ -62,7 +67,7 @@ const UserProfileScreen = () => {
             <TouchableOpacity style={styles.recordCard}>
               <Icon name="file-document-outline" size={24} color="#6979F8" />
               <View style={styles.recordInfo}>
-                <Text style={styles.recordTitle}>Vaccination Records</Text>
+                <Text style={styles.recordTitle}>Week 2 reports</Text>
                 <Text style={styles.recordDate}>Jan 15, 2025</Text>
               </View>
               <Icon name="chevron-right" size={24} color="#BDBDBD" />
@@ -93,7 +98,7 @@ const UserProfileScreen = () => {
               <Text style={styles.settingText}>Payment Methods</Text>
               <Icon name="chevron-right" size={24} color="#BDBDBD" style={styles.settingArrow} />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.settingItem, styles.logoutItem]}>
+            <TouchableOpacity onPress={handleLogOut} style={[styles.settingItem, styles.logoutItem]}>
               <Icon name="logout" size={24} color="#FF647C" />
               <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
@@ -106,9 +111,9 @@ const UserProfileScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.greeting}>My Profile</Text>
-      </View>
+      </View> */}
       
       <View style={styles.profileSection}>
         <Image source={user.profileImage} style={styles.profileImage} />
@@ -139,7 +144,7 @@ const UserProfileScreen = () => {
           style={[styles.tab, activeTab === 'medical' && styles.activeTab]} 
           onPress={() => setActiveTab('medical')}
         >
-          <Text style={[styles.tabText, activeTab === 'medical' && styles.activeTabText]}>Medical Records</Text>
+          <Text style={[styles.tabText, activeTab === 'medical' && styles.activeTabText]}>Records</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tab, activeTab === 'settings' && styles.activeTab]} 
@@ -159,7 +164,7 @@ const UserProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FE',
+    backgroundColor: '#F8F8F8',
   },
   header: {
     padding: 20,
@@ -167,11 +172,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    borderWidth: .1, 
+    borderColor: "#333"
   },
   greeting: {
     fontSize: 24,
@@ -182,19 +184,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 20,
-    marginTop: 20,
+    // marginHorizontal: 20,
+    // marginTop: 20,
     borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    borderWidth: .1,
+    borderColor: "#333"
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 150,
+    height: 150,
+    borderRadius: 100,
     marginBottom: 15,
   },
   userName: {
@@ -204,13 +203,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   userInfo: {
-    width: '100%',
+    // width: '100%',
     marginVertical: 10,
   },
   infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 5,
+    textAlign: "center"
   },
   infoText: {
     fontSize: 14,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   editButton: {
-    backgroundColor: '#6979F8',
+    backgroundColor: '#8E67FD',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
@@ -235,11 +235,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 15,
     marginHorizontal: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2,
+    borderWidth: .1,
+    borderColor: "#333"
   },
   tab: {
     flex: 1,
@@ -265,11 +262,8 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2,
+    borderWidth: .1,
+    borderColor: "#333"
   },
   sectionTitle: {
     fontSize: 18,

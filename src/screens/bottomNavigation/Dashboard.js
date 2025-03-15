@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 // import { LinearGradient } from 'expo-linear-gradient';
+import DoctorCard from '../../components/DoctorCard'
+import { doctorsData } from '../../data/doctorsData';
 
-const Dashboard = () => {
+const Dashboard = ({ navigation }) => {
   const [progress, setProgress] = useState({ completed: 0, total: 3 });
+  const popularDoctors = doctorsData.filter(doctor => doctor.isPopular);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* Greeting */}
         <View style={styles.greetingContainer}>
           <Text style={styles.greetingText}>Welcome Back, Farhaan 👋🏻</Text>
           <Text style={styles.subGreetingText}>We wish you have a good day</Text>
         </View>
 
         <View style={{ paddingHorizontal: 20 }}>
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("Questionnaire")}>
             {/* App Icon */}
             <Image source={require("../../../assets/dash1.jpg")} style={styles.icon} />
 
@@ -44,7 +46,7 @@ const Dashboard = () => {
               <Text style={styles.cardTitle}>Communities</Text>
               {/* <Text style={styles.cardSubtitle}>COURSE</Text> */}
               <View style={styles.cardButtonContainer}>
-                <TouchableOpacity style={styles.cardButton}>
+                <TouchableOpacity onPress={() => navigation.navigate("Explore")} style={styles.cardButton}>
                   <Text style={styles.cardButtonText}>Explore</Text>
                 </TouchableOpacity>
               </View>
@@ -62,7 +64,7 @@ const Dashboard = () => {
               <Text style={styles.cardTitle}>Articles</Text>
               {/* <Text style={styles.cardSubtitle}>MUSIC</Text> */}
               <View style={styles.cardButtonContainer}>
-                <TouchableOpacity style={styles.cardButton}>
+                <TouchableOpacity onPress={() => navigation.navigate("Explore")} style={styles.cardButton}>
                   <Text style={styles.cardButtonText}>Explore</Text>
                 </TouchableOpacity>
               </View>
@@ -77,7 +79,7 @@ const Dashboard = () => {
             <Text style={styles.dailyThoughtSubtitle}>RAIN FOREST • 2 MINS</Text>
           </View>
           <View style={styles.playButtonContainer}>
-            <TouchableOpacity style={styles.playButton}>
+            <TouchableOpacity onPress={() => navigation.navigate("MusicPlayer")} style={styles.playButton}>
               <Text style={styles.playButtonIcon}>▶</Text>
             </TouchableOpacity>
           </View>
@@ -85,47 +87,27 @@ const Dashboard = () => {
 
         {/* Recommended Section */}
         <View style={styles.recommendedSection}>
-          <Text style={styles.sectionTitle}>Recommended for you</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.recommendedScroll}>
-            {/* Focus Card */}
-            <TouchableOpacity style={styles.recommendedCard}>
-              <Image
-                source={require('../../../assets/icon.png')}
-                style={styles.recommendedCardImage}
-                resizeMode="cover"
-              />
-              <Text style={styles.recommendedCardTitle}>Focus</Text>
-              <View style={styles.recommendedCardIcon}>
-                <Text style={styles.recommendedCardIconText}>🧠</Text>
-              </View>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Popular Doctors</Text>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate('Doctors List')}
+            >
+              <Text style={styles.seeAllText}>Show All</Text>
             </TouchableOpacity>
-
-            {/* Happiness Card */}
-            <TouchableOpacity style={styles.recommendedCard}>
-              <Image
-                source={require('../../../assets/icon.png')}
-                style={styles.recommendedCardImage}
-                resizeMode="cover"
-              />
-              <Text style={styles.recommendedCardTitle}>Happiness</Text>
-              <View style={styles.recommendedCardIcon}>
-                <Text style={styles.recommendedCardIconText}>😊</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Partial Third Card */}
-            <TouchableOpacity style={styles.recommendedCard}>
-              <Image
-                source={require('../../../assets/icon.png')}
-                style={styles.recommendedCardImage}
-                resizeMode="cover"
-              />
-              <Text style={styles.recommendedCardTitle}>For You</Text>
-              <View style={styles.recommendedCardIcon}>
-                <Text style={styles.recommendedCardIconText}>🌈</Text>
-              </View>
-            </TouchableOpacity>
-          </ScrollView>
+          </View>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              style={styles.doctorsScrollView}
+            >
+              {popularDoctors.map(doctor => (
+                <DoctorCard
+                  key={doctor.id} 
+                  doctor={doctor} 
+                  onPress={() => navigation.navigate('Doctor Profile', { doctorId: doctor.id })}
+                />
+              ))}
+            </ScrollView>
         </View>
 
         {/* Space for bottom navigation (not included as requested) */}
@@ -169,6 +151,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 4,
+  },
+  doctorsScrollView: {
+    paddingLeft: 20,
+    marginTop: 20
   },
   tag: {
     backgroundColor: "#EAEFFD",
@@ -329,16 +315,31 @@ const styles = StyleSheet.create({
   },
   recommendedSection: {
     marginTop: 30,
+    // paddingHorizontal: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  seeAllText: {
+    fontSize: 14,
+    color: '#6C63FF',
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#3F414E',
-    marginBottom: 15,
   },
   recommendedScroll: {
     flexDirection: 'row',
+    paddingHorizontal: 20,
   },
   recommendedCard: {
     width: 160,
