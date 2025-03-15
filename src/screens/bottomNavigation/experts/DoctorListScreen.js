@@ -1,149 +1,169 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, SafeAreaView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { doctorsData } from '../../../data/doctorsData';
 import DoctorListCard from '../../../components/DoctorListCard';
 
+
+
 const DoctorListScreen = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState('Medicine Specialist');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   
   // Define category filters
   const categories = [
-    'Medicine Specialist',
-    'Cardiologist',
-    'Dentist',
-    'Physician'
+    'All',
+    'Psychologist',
+    'Psychiatrist',
+    'Therapist'
   ];
 
   // Filter doctors based on selected category
-  const filteredDoctors = doctorsData.filter(
-    doctor => !selectedCategory || doctor.specialization === selectedCategory
+  const filteredDoctors = selectedCategory === 'All' ? doctorsData : doctorsData.filter(
+    doctor => !selectedCategory || doctor.designation === selectedCategory
   );
 
-  return (
-    <View style={styles.container}>
-      {/* <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Doctor List</Text>
-        <TouchableOpacity style={styles.moreButton}>
-          <Ionicons name="ellipsis-vertical" size={24} color="#000" />
-        </TouchableOpacity>
-      </View> */}
-      
-      {/* Category filter buttons */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false} 
-        contentContainerStyle={styles.categoryContainer}
+  const renderDoctorCard = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate('Doctor Profile', { doctorId: item.id })} style={styles.doctorCard}>
+      <Image source={item.image} style={styles.doctorImage} />
+      <Text style={styles.doctorName}>{item.name}</Text>
+      <Text style={styles.doctorInstitution}>{item.specialization}</Text>
+      <Text style={styles.doctorDesignation}>{item.designation}</Text>
+    </TouchableOpacity>
+  );
+  
+  const renderCategoryButton = (category) => {
+    const isSelected = category === selectedCategory;
+    return (
+      <TouchableOpacity
+        key={category}
+        style={[
+          styles.categoryButton,
+          isSelected && { backgroundColor: '#8E67FD' }
+        ]}
+        onPress={() => setSelectedCategory(category)}
       >
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.categoryButton,
-              selectedCategory === category && styles.categoryButtonSelected
-            ]}
-            onPress={() => setSelectedCategory(category)}
-          >
-            <Text
-              style={[
-                styles.categoryButtonText,
-                selectedCategory === category && styles.categoryButtonTextSelected
-              ]}
-            >
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        <Text style={[
+          styles.categoryText,
+          isSelected && { color: 'white' }
+        ]}>
+          {category}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+
+        <View style={styles.greetingContainer}>
+          <Text style={styles.greetingText}>Meet Our Experts 🧑‍⚕️</Text>
+          <Text style={styles.subGreetingText}>Find the right specialist for you</Text>
+        </View>
+
+        {/* Category Filter */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesContainer}
+        >
+          {categories.map(category => renderCategoryButton(category))}
+        </ScrollView>
+
+        {/* Doctors Grid */}
+        <View style={styles.doctorsGrid}>
+          {filteredDoctors.map((item) => (
+            <View key={item.id} style={styles.doctorCardContainer}>
+              {renderDoctorCard({ item })}
+            </View>
+          ))}
+        </View>
       </ScrollView>
-      
-      {/* Doctor list */}
-      <View style={styles.listWrapper}>
-        <FlatList
-          data={filteredDoctors}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <DoctorListCard 
-              doctor={item} 
-              onPress={() => navigation.navigate('DoctorProfile', { doctorId: item.id })}
-            />
-          )}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          columnWrapperStyle={styles.columnWrapper}
-        />
-      </View>
-      
-      
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#f0f2f5',
+    paddingHorizontal: 10,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 20,
+  greetingContainer: {
+    marginTop: 25,
+    paddingHorizontal: 10,
   },
-  backButton: {
-    padding: 5,
-  },
-  moreButton: {
-    padding: 5,
-  },
-  title: {
-    fontSize: 20,
+  greetingText: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#3F414E',
   },
-  categoryContainer: {
-    paddingHorizontal: 15,
-    paddingBottom: 0,
-    marginBottom: -50
+  subGreetingText: {
+    fontSize: 16,
+    color: '#A1A4B2',
+    marginTop: 5,
+    marginBottom: 10
+  },
+  categoriesContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
   },
   categoryButton: {
-    paddingVertical: 4,
     paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 20,
-    marginHorizontal: 5,
-    backgroundColor: '#F0F0F0',
-    maxHeight: 30,
+    marginHorizontal: 6,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  categoryButtonSelected: {
-    backgroundColor: '#4FADFF',
-  },
-  categoryButtonText: {
+  categoryText: {
     fontSize: 14,
-    color: '#666',
-  },
-  categoryButtonTextSelected: {
-    color: '#FFFFFF',
     fontWeight: '500',
+    color: '#333',
   },
-  listWrapper: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingTop: 0,
-    marginTop: -400
-  },
-  listContainer: {
-    paddingHorizontal: 15,
-    paddingBottom: 0,
-  },
-  columnWrapper: {
+  doctorsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-  }
+    paddingHorizontal: 5,
+  },
+  doctorCardContainer: {
+    width: '48%',
+    marginBottom: 15,
+  },
+  doctorCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    // alignItems: 'center',
+    borderWidth: .1,
+    borderColor: "#333"
+  },
+  doctorImage: {
+    width: "100%",
+    height: 150,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  doctorName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
+  },
+  doctorDesignation: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 2,
+  },
+  doctorInstitution: {
+    fontSize: 11,
+    color: '#888',
+  },
 });
 
 export default DoctorListScreen;

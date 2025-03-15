@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import ChatScreen from './src/screens/ChatScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -18,8 +17,8 @@ import Profile from './src/screens/sideDrawer/Profile';
 import Settings from './src/screens/sideDrawer/Settings';
 import { NavigationContainer } from '@react-navigation/native';
 import MusicPlayerScreen from './src/screens/bottomNavigation/sounds/MusicPlayer';
-import { useEffect } from 'react';
-import { getPushToken, setupNotificationHandlers } from './src/utils/Notifications';
+import Toast from 'react-native-toast-message';
+import VideoCallScreen from './src/utils/VideoCallScreen';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -110,6 +109,7 @@ function StackNavigator() {
       <Stack.Screen name="MusicPlayer" component={MusicPlayerScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Doctors List" component={DoctorListScreen} />
       <Stack.Screen name="Doctor Profile" component={DoctorProfileScreen} />
+      <Stack.Screen name="liveCall" component={VideoCallScreen} options={{ title: "Live call" }}/>
     </Stack.Navigator>
   );
 }
@@ -126,7 +126,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <DrawerNavigator />
+      <Toast />
     </NavigationContainer>
+    
     // <ChatScreen />
   );
 }

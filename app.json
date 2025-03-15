@@ -8,6 +8,20 @@
         "projectId": "0acbb5dd-af61-418d-8c1b-99b9ed8d024e"
       }
     },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow access to the camera"
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow access to the microphone"
+        }
+      ]
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

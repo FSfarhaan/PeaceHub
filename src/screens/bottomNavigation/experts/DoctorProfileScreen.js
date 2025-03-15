@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { doctorsData } from '../../../data/doctorsData';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 const DoctorProfileScreen = ({ route, navigation }) => {
   const { doctorId } = route.params;
@@ -18,6 +20,32 @@ const DoctorProfileScreen = ({ route, navigation }) => {
 
   if (!doctor) {
     return <View style={styles.container}><Text>Loading...</Text></View>;
+  }
+
+  const handleBook = async () => {
+    try {
+      const payload = `An appointment for ${selectedAppointmentType} has been requested on ${selectedDay}, ${selectedDate} at ${selectedTime}.`;
+
+      const user_email = "farhaan8d@gmail.com";
+      const psychologist_email = "fsfarhaanshaikh7@gmail.com";
+      const session_details = payload;
+
+      const response = await axios.post("http://10.0.2.2:5000/request-session", {
+        user_email, psychologist_email, session_details
+      });
+
+      Toast.show({
+        type: 'success', // 'success', 'error', 'info'
+        text1: response.data.message || "Session request sent!",
+        text2: 'Waiting for the approval from other side.',
+      });
+
+      // console.log(response);
+      console.log(user_email, psychologist_email, session_details)
+
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '3:00 PM', '4:00 PM'];
@@ -47,9 +75,9 @@ const DoctorProfileScreen = ({ route, navigation }) => {
             <View style={styles.doctorInfo}>
               <Text style={styles.doctorName}>{doctor.name}</Text>
               <Text style={styles.specialization}>{doctor.specialization}</Text>
-              <Text style={styles.college}>{doctor.college}</Text>
+              <Text style={styles.college}>{doctor.designation}</Text>
               
-              <View style={styles.contactButtons}>
+              {/* <View style={styles.contactButtons}>
                 <TouchableOpacity style={styles.contactButton}>
                   <Ionicons name="call" size={20} color="#8E67FD" />
                 </TouchableOpacity>
@@ -59,7 +87,7 @@ const DoctorProfileScreen = ({ route, navigation }) => {
                 <TouchableOpacity style={styles.contactButton}>
                   <Ionicons name="chatbubble" size={20} color="#8E67FD" />
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
           
@@ -162,7 +190,7 @@ const DoctorProfileScreen = ({ route, navigation }) => {
               <Text style={styles.priceLabel}>Visit</Text>
               <Text style={styles.price}>$20</Text>
             </View>
-            <TouchableOpacity style={styles.bookButton}>
+            <TouchableOpacity onPress={handleBook} style={styles.bookButton}>
               <Text style={styles.bookButtonText}>Book Now</Text>
             </TouchableOpacity>
           </View>

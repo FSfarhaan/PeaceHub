@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DoctorCard from '../../components/DoctorCard'
 import { doctorsData } from '../../data/doctorsData';
 
+
 const Experts = ({ navigation }) => {
   // Filter popular doctors
   const popularDoctors = doctorsData.filter(doctor => doctor.isPopular);
@@ -107,11 +108,11 @@ const Experts = ({ navigation }) => {
               <Text style={styles.appointmentSpecialty}>Ph.D. in Neuropsychiatry</Text>
             </View>
             <View style={styles.appointmentActions}>
-              <TouchableOpacity style={[styles.appointmentButton, styles.rescheduleButton]}>
-                <Text style={styles.rescheduleText}>Reschedule</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('liveCall')} style={[styles.appointmentButton, styles.rescheduleButton]}>
+                <Text style={styles.rescheduleText}>Start meeting</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.appointmentButton, styles.cancelButton]}>
-                <Text style={styles.cancelText}>Cancel</Text>
+                <Text style={styles.cancelText}>Cance</Text>
               </TouchableOpacity>
             </View>
           </View>
