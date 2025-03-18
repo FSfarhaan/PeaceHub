@@ -37,7 +37,7 @@ const Dashboard = ({ navigation }) => {
         </View>
 
         <View style={{ paddingHorizontal: 20 }}>
-          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("Questionnaire")}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("DailyTasks")}>
             {/* App Icon */}
             <Image source={require("../../../assets/dash1.jpg")} style={styles.icon} />
 

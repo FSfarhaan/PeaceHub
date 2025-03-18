@@ -49,12 +49,23 @@ const LoginScreen = ({ navigation }) => {
         }
   
         showToast("success", isSignup ? "Signup Successful" : "Login Successful");
+
+        if(email.startsWith("exp")) {
+          setTimeout(() => {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'PatientsList' }],
+              })
+            );
+          }, 200);
+        }
         
         setTimeout(() => {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{ name: 'Initial' }],
+              routes: [{ name: isSignup ? 'DailyTasks' : 'Initial' }],
             })
           );
         }, 200);

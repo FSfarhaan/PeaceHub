@@ -25,6 +25,10 @@ import Questionnaire from './src/screens/Questionnaire';
 import CommunityChat from './src/screens/CommunityChat';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DailyTasks from './src/screens/DailyTasks';
+import PatientListScreen from './src/screens/ExpertPortal/PatientsList'
+import ProgressScreen from './src/screens/ExpertPortal/ProgressScreen';
+import { setupNotificationHandlers } from './src/utils/Notifications';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -62,16 +66,16 @@ const toastConfig = {
 // ✅ Bottom Tabs with Drawer Button in Header
 function BottomTabs({ navigation }) {
 
-  // useEffect(()=> {
-  //   async function setup() {
-  //     setupNotificationHandlers();
-  //     const token = await getPushToken();
-  //     if (token) {
-  //       Alert.alert('Push Token', token); // Save this in your backend
-  //     }
-  //   }
-  //   setup();
-  // }, [])
+  useEffect(()=> {
+    async function setup() {
+      setupNotificationHandlers();
+      const token = await getPushToken();
+      if (token) {
+        Alert.alert('Push Token', token); // Save this in your backend
+      }
+    }
+    setup();
+  }, [])
 
   return (
     <View style={{ flex: 1 }}>
@@ -146,6 +150,7 @@ function BottomTabs({ navigation }) {
 function StackNavigator() {
   return (
     <Stack.Navigator>
+      <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Initial" component={BottomTabs} options={{ headerShown: false }} />
       <Stack.Screen name="MusicPlayer" component={MusicPlayerScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Doctors List" component={DoctorListScreen} />
@@ -153,9 +158,11 @@ function StackNavigator() {
       <Stack.Screen name="liveCall" component={VideoCallScreen} options={{ title: "Live call" }}/>
       <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ title: "Chat Screen" }}/>
       <Stack.Screen name="ProfileScreen" component={UserProfileScreen} options={{ title: "Profile" }}/>
-      <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Questionnaire" component={Questionnaire} options={{ headerShown: false }}/>
       <Stack.Screen name="CommunityChat" component={CommunityChat} options={{ title: "Commmunity" }} />
+      <Stack.Screen name="DailyTasks" component={DailyTasks} options={{ title: "Daily Tasks" }} />
+      <Stack.Screen name="PatientsList" component={PatientListScreen} options={{ title: "Patients List" }} />
+      <Stack.Screen name="ProgressScreen" component={ProgressScreen} options={{ title: "Progress" }} />
     </Stack.Navigator>
   );
 }
