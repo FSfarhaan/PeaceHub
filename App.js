@@ -17,21 +17,47 @@ import Profile from './src/screens/sideDrawer/Profile';
 import Settings from './src/screens/sideDrawer/Settings';
 import { NavigationContainer } from '@react-navigation/native';
 import MusicPlayerScreen from './src/screens/bottomNavigation/sounds/MusicPlayer';
-import Toast from 'react-native-toast-message';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import VideoCallScreen from './src/utils/VideoCallScreen';
 import UserProfileScreen from './src/screens/ProfileScreen';
 import LoginScreen from './src/screens/Login';
 import Questionnaire from './src/screens/Questionnaire';
+import CommunityChat from './src/screens/CommunityChat';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-const DrawerToggle = ({ navigation }) => (
-  <TouchableOpacity onPress={() => navigation.openDrawer()} style={{ marginLeft: 15 }}>
-    <Ionicons name="menu" size={30} color="black" />
-  </TouchableOpacity>
-);
+
+
+const toastConfig = {
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: '#4CAF50', backgroundColor: '#4CAF50' }} // Custom background & color
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff',
+      }}
+    />
+  ),
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      style={{ borderLeftColor: '#FF5252', backgroundColor: '#FF5252' }} // Darker theme
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff',
+      }}
+    />
+  ),
+};
 
 // ✅ Bottom Tabs with Drawer Button in Header
 function BottomTabs({ navigation }) {
@@ -76,43 +102,45 @@ function BottomTabs({ navigation }) {
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          headerLeft: () => <DrawerToggle navigation={navigation} />, // ✅ Menu Button
+          tabBarActiveTintColor: "#8E67FD", // 🎨 Purplish shade for selected icon
+          tabBarInactiveTintColor: "#ccc", // ⚪ Light gray for unselected icons
+          tabBarStyle: {
+            backgroundColor: "#fff", // ⚪ White background for the tab bar
+            height: 70,
+            // paddingBottom: 20,
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          tabBarIconStyle: {
+            marginTop: 5
+          },
+          tabBarLabelStyle: {
+            fontSize: 12, // Reduce label size slightly
+            fontWeight: "600", // Make labels slightly bolder
+          },
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
               <View style={styles.profileButton}>
-                <Text style={styles.profileButtonText}>FS</Text>
+                <Ionicons name="person" size={20} color="white" />
               </View>
             </TouchableOpacity>
           ),
         })}
       >
-        <Tab.Screen name="Dashboard" component={Dashboard} />
-        <Tab.Screen name="Explore" component={Explore} />
-        <Tab.Screen name="Experts" component={Experts} />
-        <Tab.Screen name="Mindful" component={Mindful} />
+        <Tab.Screen name="Dashboard" component={Dashboard}/>
+        <Tab.Screen name="Explore" component={Explore}/>
+        <Tab.Screen name="Experts" component={Experts}/>
+        <Tab.Screen name="Mindful" component={Mindful}/>
         <Tab.Screen name="Reports" component={Reports} />
       </Tab.Navigator>
-
+  
       {/* Floating Action Button */}
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("ChatScreen")}>
         <Ionicons name="chatbubble-ellipses-outline" size={30} color="white" />
       </TouchableOpacity>
     </View>
   );
-}
-
-function DrawerNavigator() {
-  return (
-    <Drawer.Navigator initialRouteName="Home">
-      <Drawer.Screen 
-        name="Home" 
-        component={StackNavigator} 
-        options={{ headerShown: false }} 
-      />
-      <Drawer.Screen name="Profile" component={Profile} />
-      <Drawer.Screen name="Settings" component={Settings} />
-    </Drawer.Navigator>
-  );
+  
 }
 
 function StackNavigator() {
@@ -127,6 +155,7 @@ function StackNavigator() {
       <Stack.Screen name="ProfileScreen" component={UserProfileScreen} options={{ title: "Profile" }}/>
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Questionnaire" component={Questionnaire} options={{ headerShown: false }}/>
+      <Stack.Screen name="CommunityChat" component={CommunityChat} options={{ title: "Commmunity" }} />
     </Stack.Navigator>
   );
 }
@@ -141,12 +170,10 @@ function StackNavigator() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <DrawerNavigator />
-      <Toast />
-    </NavigationContainer>
-    
-    // <ChatScreen />
+      <NavigationContainer>
+        <StackNavigator />
+        <Toast config={toastConfig} />
+      </NavigationContainer>
   );
 }
 

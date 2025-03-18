@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import profilepic from '../../assets/images/profile.jpeg';
-import { useNavigation } from '@react-navigation/native';
-
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('appointments');
@@ -19,8 +19,19 @@ const UserProfileScreen = () => {
     ]
   };
 
-  const handleLogOut = () => {
-    navigation.navigate("LoginScreen");
+  const handleLogOut = async () => {
+    setTimeout(() => {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'LoginScreen' }],
+        })
+      );
+    }, 200)
+
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('email');
+    await AsyncStorage.removeItem('password');
   }
 
   const renderTabContent = () => {

@@ -3,15 +3,36 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaVi
 // import { LinearGradient } from 'expo-linear-gradient';
 import DoctorCard from '../../components/DoctorCard'
 import { doctorsData } from '../../data/doctorsData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Dashboard = ({ navigation }) => {
   const [progress, setProgress] = useState({ completed: 0, total: 3 });
   const popularDoctors = doctorsData.filter(doctor => doctor.isPopular);
+  const [name, setName] = useState(null);
+  AsyncStorage.getItem("name").then(setName);
+
+  const getStoredData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const name = await AsyncStorage.getItem("name");
+      const email = await AsyncStorage.getItem("email");
+      const password = await AsyncStorage.getItem("password");
+  
+      console.log("Token:", token);
+      console.log("Name:", name);
+      console.log("Email:", email);
+      console.log("Password:", password);
+    } catch (error) {
+      console.error("Error retrieving data:", error);
+    }
+  };
+  
+  getStoredData();
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.greetingContainer}>
-          <Text style={styles.greetingText}>Welcome Back, Farhaan 👋🏻</Text>
+          <Text style={styles.greetingText}>Welcome Back, {name} 👋🏻</Text>
           <Text style={styles.subGreetingText}>We wish you have a good day</Text>
         </View>
 

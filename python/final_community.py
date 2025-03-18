@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import json
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -6,6 +7,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
 
 sia = SentimentIntensityAnalyzer()
 
@@ -131,25 +133,13 @@ def add_member():
 @app.route('/send_message', methods=['POST'])
 def send_message():
     data = request.json
-    community_name = data['community_name']
-    username = data['username']
     message = data['message']
-
-    if community_name not in communities:
-        return jsonify({"message": "Community not found."}), 404
-
-    user = next((m for m in communities[community_name].members if m.username == username), None)
-    if not user:
-        return jsonify({"message": "User not found in the community."}), 404
 
     sentiment_score = sia.polarity_scores(message)['compound']
     if sentiment_score < 0:
-        return jsonify({"message": "Negative messages are not allowed in the community. Please rephrase your message."}), 400
-
-    response = communities[community_name].add_message(user, message)
-    if response:
-        return jsonify({"message": response}), 400
-    return jsonify({"message": "Message sent successfully."})
+        return jsonify({"message": "Negative messages are not allowed in the community. Please rephrase your message.", "score": sentiment_score})
+    
+    return jsonify({"message": "Message sent successfully.", "score": sentiment_score})
 
 @app.route('/leave_community', methods=['POST'])
 def leave_community():
@@ -177,4 +167,5 @@ def remove_member():
     return jsonify({"message": response})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+

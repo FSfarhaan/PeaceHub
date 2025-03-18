@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from flask import Flask, render_template, request
+from flask_cors import CORS
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.linear_model import LogisticRegression
@@ -31,6 +32,7 @@ logreg.fit(X_train_scaled, y_train)
 
 # Flask application setup
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all routes & origins
 
 # Questions to ask the user
 questions = [
@@ -56,12 +58,16 @@ questions = [
     "During the past week, how often have you felt that life is not worth living?"
 ]
 
-# Home route
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        # Step 8: Get user input from form
-        user_responses = [int(request.form[f'Q{i}']) for i in range(1, 21)]
+from flask import Flask, request, jsonify
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        # Step 8: Get user input from JSON request
+        user_responses = request.json.get("responses", [])
+
+        if len(user_responses) != 20:
+            return jsonify({"error": "Exactly 20 responses are required."}), 400
 
         # Create a DataFrame for the input
         user_data = pd.DataFrame([user_responses], columns=Features)
@@ -83,13 +89,19 @@ def index():
 
         # Show the description
         feedback = descriptions.get(depression_level, "No description available.")
-        return render_template('result.html', depression_level=depression_level, feedback=feedback)
 
-    # Render the input form with the questions
-    return render_template('index.html', questions=questions)
+        # Return JSON response
+        return jsonify({
+            "depression_level": depression_level,
+            "feedback": feedback
+        })
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
 
 
 

@@ -2,14 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
 
-const Questionnaire = () => {
+const Questionnaire = ({ navigation }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState([]); // Use an array instead of an object
   const [completed, setCompleted] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(30 * 60); // 30 minutes in seconds
-  const [isTimerActive, setIsTimerActive] = useState(true);
-  const timerRef = useRef(null);
   
   // Your questions and options from the provided data
   const questionsData = [
@@ -61,11 +60,11 @@ const Questionnaire = () => {
   // Convert the data into the structured format we need
   const questions = questionsData.map((question, index) => {
     return {
-      id: index + 1,
+      id: index,
       text: question,
       options: optionsData[index].map((option, optIndex) => {
         return {
-          id: String.fromCharCode(65 + optIndex), // Convert to A, B, C, D
+          id: optIndex, // Use numeric values (0, 1, 2, 3) for options
           text: option,
           value: optIndex // Store numeric value for scoring
         };
@@ -73,68 +72,22 @@ const Questionnaire = () => {
     };
   });
 
-  // Load saved progress on component mount
-  useEffect(() => {
-    loadSavedProgress();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
-  // Timer functionality
-  useEffect(() => {
-    if (isTimerActive && timeRemaining > 0) {
-      timerRef.current = setInterval(() => {
-        setTimeRemaining(prevTime => {
-          if (prevTime <= 1) {
-            clearInterval(timerRef.current);
-            setIsTimerActive(false);
-            handleTimeUp();
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
-    } else if (timeRemaining <= 0) {
-      clearInterval(timerRef.current);
-      setIsTimerActive(false);
-    }
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isTimerActive, timeRemaining]);
-
   // Save progress after each answer
   useEffect(() => {
     saveProgress();
   }, [answers, currentQuestionIndex]);
 
-  const formatTime = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const handleTimeUp = () => {
-    Alert.alert(
-      "Time's Up!",
-      "Your time has expired. The questionnaire will be submitted automatically.",
-      [{ text: "OK", onPress: () => handleSubmit() }]
-    );
-  };
+  useEffect(() => {
+    loadSavedProgress();
+  }, []);
 
   const loadSavedProgress = async () => {
     try {
       const savedAnswers = await AsyncStorage.getItem('questionnaire_answers');
       const savedQuestion = await AsyncStorage.getItem('questionnaire_current_question');
-      const savedTime = await AsyncStorage.getItem('questionnaire_time_remaining');
       
       if (savedAnswers) setAnswers(JSON.parse(savedAnswers));
       if (savedQuestion) setCurrentQuestionIndex(parseInt(savedQuestion));
-      if (savedTime) setTimeRemaining(parseInt(savedTime));
     } catch (error) {
       console.error('Failed to load saved progress:', error);
     }
@@ -144,7 +97,6 @@ const Questionnaire = () => {
     try {
       await AsyncStorage.setItem('questionnaire_answers', JSON.stringify(answers));
       await AsyncStorage.setItem('questionnaire_current_question', currentQuestionIndex.toString());
-      await AsyncStorage.setItem('questionnaire_time_remaining', timeRemaining.toString());
     } catch (error) {
       console.error('Failed to save progress:', error);
     }
@@ -152,41 +104,23 @@ const Questionnaire = () => {
 
   const clearSavedProgress = async () => {
     try {
-      await AsyncStorage.removeItem('questionnaire_answers');
+      // await AsyncStorage.removeItem('questionnaire_answers');
       await AsyncStorage.removeItem('questionnaire_current_question');
       await AsyncStorage.removeItem('questionnaire_time_remaining');
     } catch (error) {
       console.error('Failed to clear saved progress:', error);
     }
   };
-
-  // Calculate score - for mental health questionnaires like this, scoring is important
-  const calculateScore = () => {
-    let totalScore = 0;
-    
-    Object.keys(answers).forEach(questionId => {
-      const question = questions.find(q => q.id === parseInt(questionId));
-      if (question) {
-        const selectedOption = question.options.find(opt => opt.id === answers[questionId]);
-        if (selectedOption) {
-          totalScore += selectedOption.value;
-        }
-      }
-    });
-    
-    return totalScore;
-  };
   
   const handleSelectOption = (questionId, optionId) => {
-    setAnswers({
-      ...answers,
-      [questionId]: optionId,
-    });
+    const newAnswers = [...answers];
+    newAnswers[questionId] = optionId; // Store the numeric value of the selected option
+    setAnswers(newAnswers);
   };
   
   const handleNextQuestion = () => {
     // Form validation
-    if (!answers[questions[currentQuestionIndex].id]) {
+    if (answers[currentQuestionIndex] === undefined) {
       Alert.alert(
         "No Answer Selected",
         "Please select an answer before proceeding.",
@@ -217,37 +151,40 @@ const Questionnaire = () => {
   };
   
   const handleSubmit = async () => {
-    // Calculate the total score
-    const totalScore = calculateScore();
-    
-    // Here you would typically send the data to your backend
     console.log('Submitted answers:', answers);
-    console.log('Total score:', totalScore);
-    
-    // Determine severity based on score (this is an example, adjust as needed)
-    let severity = 'Minimal';
-    if (totalScore >= 14 && totalScore <= 19) severity = 'Mild';
-    else if (totalScore >= 20 && totalScore <= 28) severity = 'Moderate';
-    else if (totalScore >= 29) severity = 'Severe';
-    
-    Alert.alert(
-      `Submission Successful, You have completed the assessment.\n\nTotal Score: ${totalScore}\nInterpretation: ${severity} symptoms\n\nThank you for your participation.`,
-      [
-        { 
-          text: "OK", 
-          onPress: async () => {
-            // Clear saved progress
-            await clearSavedProgress();
-            
-            // Here you might navigate to a detailed results screen or back to home
-          } 
-        }
-      ]
-    );
+    try {
+      const response = await axios.post("http://192.168.237.209:5000/predict", { responses: answers });
+      const data = await response.data;
+  
+      console.log(response.data);
+      
+      Alert.alert(
+        "Submission Successful", // Title
+        `You have completed the assessment.\n\n${data.depression_level} \n\n${data.feedback}`, // Message
+        [
+          { 
+            text: "OK", 
+            onPress: async () => {
+              setTimeout(() => {
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'Initial' }],
+                  })
+                );
+              }, 200);
+              await clearSavedProgress();
+            } 
+          }
+        ]
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
   
   const renderProgressBar = () => {
-    const progress = (Object.keys(answers).length / questions.length) * 100;
+    const progress = (answers.filter(answer => answer !== undefined).length / questions.length) * 100;
     
     return (
       <View style={styles.progressContainer}>
@@ -255,7 +192,7 @@ const Questionnaire = () => {
           <View style={[styles.progressFill, { width: `${progress}%` }]} />
         </View>
         <Text style={styles.progressText}>
-          {Object.keys(answers).length} of {questions.length} answered
+          {answers.filter(answer => answer !== undefined).length} of {questions.length} answered
         </Text>
       </View>
     );
@@ -268,7 +205,6 @@ const Questionnaire = () => {
   if (completed) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar style="auto" />
         <View style={styles.completedContainer}>
           <Text style={styles.completedText}>Assessment Completed</Text>
           
@@ -282,7 +218,7 @@ const Questionnaire = () => {
                 const answered = answers[question.id];
                 let selectedOption = null;
                 
-                if (answered) {
+                if (answered !== undefined) {
                   selectedOption = question.options.find(opt => opt.id === answered);
                 }
                 
@@ -309,11 +245,11 @@ const Questionnaire = () => {
               style={styles.backButton}
               onPress={() => setCompleted(false)}
             >
-              <Text style={styles.backButtonText}>Back to Questions</Text>
+              <Text>Back to Questions</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={styles.submitButton}
+              style={[styles.navigationButton, styles.submitButton]}
               onPress={handleSubmit}
             >
               <Text style={styles.submitButtonText}>Submit</Text>
@@ -326,15 +262,11 @@ const Questionnaire = () => {
   
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
+      {/* <StatusBar style='light'/> */}
       <View style={styles.headerContainer}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>Mental Health Assessment</Text>
+          <Text style={styles.logoText}>Understanding You Better 🤗</Text>
         </View>
-        
-        <Text style={styles.timerText}>
-          Remaining Time: {formatTime(timeRemaining)}
-        </Text>
         
         {renderProgressBar()}
       </View>
@@ -401,14 +333,14 @@ const Questionnaire = () => {
               }
             }}
           >
-            <Text style={styles.navigationButtonText}>Finish</Text>
+            <Text style={{color: "white", fontStyle: "bold"}}>Finish</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity 
             style={[styles.navigationButton, styles.nextButton]}
             onPress={handleNextQuestion}
           >
-            <Text style={styles.navigationButtonText}>Next</Text>
+            <Text style={{color: "white"}}>Next</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -423,6 +355,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     padding: 16,
+    
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
     backgroundColor: '#f9f9f9',
@@ -454,7 +387,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#5bc0de',
+    backgroundColor: '#8E67FD',
   },
   progressText: {
     textAlign: 'center',
@@ -490,17 +423,11 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     marginBottom: 12,
     backgroundColor: '#f9f9f9',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    borderWidth: .1,
+    borderColor: "#333"
   },
   selectedOption: {
-    backgroundColor: '#428bca',
+    backgroundColor: '#8E67FD',
     borderColor: '#357ebd',
   },
   optionText: {
@@ -526,21 +453,15 @@ const styles = StyleSheet.create({
     minWidth: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    borderWidth: .1,
+    borderColor: "#333"
   },
   disabledButton: {
     backgroundColor: '#f0f0f0',
     opacity: 0.5,
   },
   nextButton: {
-    backgroundColor: '#428bca',
+    backgroundColor: '#8E67FD',
   },
   finishButton: {
     backgroundColor: '#5cb85c',
@@ -611,6 +532,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: "#000"
+  },
+  submitButton : {
+    backgroundColor: "#8E67FD"
+  },
+  submitButtonText:  {
+    color: "#fff"
   }
 });
 

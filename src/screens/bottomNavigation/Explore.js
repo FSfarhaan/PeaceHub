@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -14,37 +14,49 @@ import {
 } from 'react-native';
 import { Feather, Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import CommunityModal from '../../components/CommunityModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Explore = () => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedCommunity, setSelectedCommunity] = useState(null);
 
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   // Mock data for categories
   const categories = [
     {
+      mId: "67d7e62e172aa358fb19d551",
       id: 1,
-      title: 'Family Stress',
+      title: 'Family Problems',
       members: '12,098K Members',
+      description: "A supportive community where people share their family challenges and seek advice, empathy, and solutions from others who have faced similar experiences.",
       image: require('../../../assets/family.jpg')
     },
     {
+      mId: "67d7e664172aa358fb19d553",
       id: 2,
       title: 'Self-Love Hub',
       members: '10,394K Members',
+      description: "A uplifting community focused on self-love, where members share experiences, affirmations, and tips to build confidence and self-care habits.",
       image: require('../../../assets/selflove.jpg')
     },
     {
+      mId: '67d7e691172aa358fb19d555',
       id: 3,
       title: 'Relationships',
       members: '8,754K Members',
+      description: "A supportive space to discuss relationships, seek advice, and share experiences on love, trust, and communication.",
       image: require('../../../assets/relationship.jpg')
     },
     {
+      mId: "67d7e6a0172aa358fb19d557",
       id: 4,
       title: 'Career Guidance',
       members: '9,127K Members',
+      description: "A community for career growth, where members get advice, share job opportunities, and discuss skills for professional success.",
       image: require('../../../assets/career.jpg')
     }
-  ];
+  ];  
 
   // Mock data for articles
   const articles = [
@@ -114,8 +126,35 @@ const Explore = () => {
     }
   ];
 
+  const handleCommunity = (id) => {
+    const selected = categories.find((cat) => cat.id === id);
+    setSelectedCommunity(selected || {});  // Ensure it's not null
+    console.log("Selected Community:", selected);
+    setModalVisible(true);
+};
+
+  // const openModal = () => {
+  //   // setSelectedCommunity(community);
+  //   setModalVisible(true);
+  // };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const joinCommunity = async (communityId, communityName) => {
+    console.log(`Joined community: ${communityId}`);
+    console.log(communityName);
+    setTimeout(() => {
+      closeModal();
+      navigation.navigate("CommunityChat", { communityId, communityName })
+    }, 200)
+
+    await AsyncStorage.setItem("communityName", communityName);
+  };
+
   const renderCategoryItem = (item) => (
-    <TouchableOpacity key={item.id} style={styles.categoryCard}>
+    <TouchableOpacity onPress={() => handleCommunity(item.id)} key={item.id} style={styles.categoryCard}>
       <Image source={item.image} style={styles.categoryImage} />
       <Text style={styles.categoryTitle}>{item.title}</Text>
       <Text style={styles.categoryMembers}>{item.members}</Text>
@@ -208,9 +247,9 @@ const Explore = () => {
                 <Text style={styles.greetingText}>Find Your Calm 🎧</Text>
                 <Text style={styles.subGreetingText}>Let nature soothe your mind</Text>
             </View>
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
                 <Text style={styles.showAllText}>Show all</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
         
         <View style={styles.soundsContainer}>
@@ -220,6 +259,13 @@ const Explore = () => {
         {/* Bottom spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
+
+      {selectedCommunity && <CommunityModal
+        isVisible={isModalVisible}
+        onClose={closeModal}
+        community={selectedCommunity}
+        onJoin={joinCommunity}
+      /> }
     </SafeAreaView>
   );
 };

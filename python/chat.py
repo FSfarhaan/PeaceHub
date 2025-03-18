@@ -9,6 +9,8 @@ import re
 
 GROQ_API_KEY = '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'
 GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+MAX_HISTORY_LENGTH = 10
+
 
 headers = {
     'Authorization': f'Bearer {GROQ_API_KEY}',
@@ -44,6 +46,8 @@ def remove_duplicates(text):
     
     return "\n".join(cleaned_text)
 
+def trim_chat_history(chat_history):
+    return chat_history[-MAX_HISTORY_LENGTH:]
 
 def get_response_from_groq(messages):
     payload = {
@@ -82,6 +86,7 @@ def save_chat_history(session_id, messages):
 async def chat(message: Message):
     session_id = message.session_id or str(uuid.uuid4())
     chat_history = load_chat_history(session_id)
+    chat_history = trim_chat_history(chat_history)
 
     if message.user_input.lower() == 'exit':
         return {"response": "Before you go, remember to be kind to yourself. Take care! 💛", "session_id": session_id}
@@ -89,7 +94,7 @@ async def chat(message: Message):
     if len(chat_history) == 0:
         chat_history.append({
             'role': 'system',
-            'content': 'You are a compassionate and friendly assistant ready to chat and provide support.'
+            'content': 'You are a compassionate and friendly assistant ready to chat and provide support. Dont give long responses, try to keep the message length small'
         })
     
     chat_history.append({'role': 'user', 'content': message.user_input})

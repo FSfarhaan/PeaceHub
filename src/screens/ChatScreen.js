@@ -18,8 +18,8 @@ import axios from "axios";
 const ChatScreen = () => {
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([
-    { id: "1", text: "Hello Farhaan 👋 I'm your friend peace hub", sender: "bot" },
-    { id: "2", text: "What can I do for you today?", sender: "bot" }
+    { _id: Date.now().toString(), text: "Hello Farhaan 👋 I'm your friend peace hub", sender: "bot" },
+    { _id: (Date.now() + 1).toString(), text: "What can I do for you today?", sender: "bot" }
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -32,11 +32,8 @@ const ChatScreen = () => {
   const translateTabY = useRef(new Animated.Value(0)).current;
   const translateDocY = useRef(new Animated.Value(500)).current;
 
-  const typingMessage = {
-    id: "typing",
-    text: "Wait for the response",
-    sender: "bot",
-  };
+  const memoizedChatHistory = React.useMemo(() => chatHistory, [chatHistory]);
+
 
   const tabs = [
     {
@@ -106,32 +103,37 @@ const ChatScreen = () => {
     }
   };
   
+  const saveMessages = async (text, sender) => {
+    // await response.data;
+    // setChatHistory((prevHistory) => [
+    //   ...prevHistory,
+    //   { id: sender === "bot" ? "typing" : Date.now().toString(), text, sender },
+    // ]);
+    const response = await axios.post("http://192.168.237.209:3001/bot-chat", { text, sender });
+    const data = response.data;
+    console.log(data.message);
+  }
 
   const handleSend = async () => {
-    if (message.trim() === "") return;
-
-    // Add user message to chat
-    const userMessageId = Date.now().toString();
-    setChatHistory((prevHistory) => [
-      ...prevHistory,
-      { id: userMessageId, text: message, sender: "user" },
-    ]);
+    if (message.trim() === "") return;    
 
     const userMessageText = message;
+    saveMessages(userMessageText, "user");
+    setChatHistory((prevHistory) => [
+      ...prevHistory,
+      { _id: Date.now().toString(), text: userMessageText, sender: "user" },
+    ]);
+    
     setMessage("");
     setIsLoading(true);
 
-    // Simulate backend response (replace with actual API call)
-    // Uncomment the line below and comment out the setTimeout when connecting to real backend
     const botResponse = await sendMessageToBackend(userMessageText);
-
-    // const text =
-    //   "Some sentence which definitely should be meaningful because it will come from an actual python backend. Currently some placeholder 
-    // text is placed to simulate the response.";
-
 
     setIsTyping(true);
     setResponseText(botResponse.trim().split(/\s+/).filter(word => word !== ''));
+    const botMessageText = botResponse.trim();
+
+    saveMessages(botMessageText, "bot");
   };
 
   const handleDoctor = () => {
@@ -253,9 +255,6 @@ const ChatScreen = () => {
         return newWords;
       });
 
-      
-
-      // i++;
       if (i >= totalWords) {
         clearInterval(interval);
 
@@ -284,20 +283,40 @@ const ChatScreen = () => {
     };
   }, [responseText]);
 
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+          const response = await axios.get("http://192.168.237.209:3001/getMessages");
+          const data = response.data;
+          // console.log(data.messages);
+
+          // Ensure `data.messages` is correctly added to chatHistory
+          setChatHistory((prev) => [...prev, ...data.messages]); 
+      } catch (error) {
+          console.error("Error fetching messages:", error);
+      }
+  };
+    getMessages();
+  }, [])
+
+  useEffect(() => {
+    flatListRef.current?.scrollToEnd({ animated: true });
+}, [chatHistory]);
+
   return (
     <SafeAreaView style={styles.container}>
 
       <FlatList
         ref={flatListRef}
         data={[
-          ...chatHistory,
+          ...memoizedChatHistory,
           ...(isTyping
             ? [{ id: "typing", text: visibleWords.join(" "), sender: "bot" }]
             : []),
         ]}
         renderItem={renderMessage}
         style={styles.chatContainer}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         contentContainerStyle={styles.chatContent}
         onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
       />
@@ -331,45 +350,7 @@ const ChatScreen = () => {
             />
           </TouchableOpacity>
         </View>
-
-        {/* <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.tabContainer}
-          contentContainerStyle={styles.tabContent}
-        >
-          {tabs.map((tab) => (
-            <TouchableOpacity
-              key={tab.id}
-              style={[
-                styles.tab,
-                {
-                  backgroundColor: tab.backgroundColor,
-                  borderBlockColor: tab.borderBlockColor,
-                  borderRightColor: tab.borderBlockColor,
-                  borderLeftColor: tab.borderBlockColor,
-                },
-              ]}
-              onPress={tab.id === "2" ? handleDoctor : undefined}
-            >
-              <Text style={styles.tabIcon}>{tab.icon}</Text>
-              <Text style={styles.tabName}>{tab.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView> */}
       </Animated.View>
-{/* 
-      {
-        <Animated.View
-          style={{
-            position: "absolute",
-            bottom: 0,
-            transform: [{ translateY: translateDocY }],
-          }}
-        >
-          <DoctorList onClose={onClose} handleSchedule={handleSchedule} />
-        </Animated.View>
-      } */}
     </SafeAreaView>
   );
 };

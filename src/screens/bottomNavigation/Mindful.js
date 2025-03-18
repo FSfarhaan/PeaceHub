@@ -243,13 +243,14 @@ const Mindful = () => {
                 />
               </View>
             </View>
+
+            <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+              <Text style={styles.saveButtonText}>Save Log</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
 
         {/* Save Button */}
-        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>Save Log</Text>
-        </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -398,19 +399,10 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   saveButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
     backgroundColor: '#8E67FD',
     borderRadius: 12,
     paddingVertical: 16,
-    alignItems: 'center',
-    shadowColor: '#6366f1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    alignItems: 'center'
   },
   saveButtonText: {
     color: '#fff',
