@@ -88,6 +88,8 @@ async def chat(message: Message):
     chat_history = load_chat_history(session_id)
     chat_history = trim_chat_history(chat_history)
 
+    print(message)
+
     if message.user_input.lower() == 'exit':
         return {"response": "Before you go, remember to be kind to yourself. Take care! 💛", "session_id": session_id}
 

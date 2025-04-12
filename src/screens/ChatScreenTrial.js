@@ -16,11 +16,11 @@ import DoctorList from "../components/DoctorsList";
 import axios from "axios";
 import { StatusBar } from "expo-status-bar";
 
-const ChatScreen = () => {
+const ChatScreenTrial = () => {
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([
     { _id: Date.now().toString(), text: "Hello Farhaan 👋 I'm your friend chatbot. How may I help you?", sender: "bot" },
-    { _id: (Date.now() + 1).toString(), text: "What can I do for you today?", sender: "bot" }
+    // { _id: (Date.now() + 1).toString(), text: "What can I do for you today?", sender: "bot" }
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -28,54 +28,14 @@ const ChatScreen = () => {
   const [visibleWords, setVisibleWords] = useState([]);
   const [responseText, setResponseText] = useState([]);
 
-  const fadeAnimations = useRef([]);
+//   const fadeAnimations = useRef([]);
   const flatListRef = useRef(null);
   const translateTabY = useRef(new Animated.Value(0)).current;
   const translateDocY = useRef(new Animated.Value(500)).current;
 
   const memoizedChatHistory = React.useMemo(() => chatHistory, [chatHistory]);
 
-
-  const tabs = [
-    {
-      id: "1",
-      name: "Emergency contact",
-      icon: "🩺",
-      borderBlockColor: "#ef4444",
-      backgroundColor: "#fee2e2",
-    },
-    {
-      id: "2",
-      name: "Schedule a session",
-      icon: "🛒",
-      borderBlockColor: "#9333ea",
-      backgroundColor: "#f3e8ff",
-    },
-    {
-      id: "3",
-      name: "Group",
-      icon: "📃",
-      borderBlockColor: "#eab308",
-      backgroundColor: "#fef9c3",
-    },
-    {
-      id: "4",
-      name: "Favorites",
-      icon: "❤️",
-      borderBlockColor: "#22c55e",
-      backgroundColor: "#dcfce7",
-    },
-    {
-      id: "5",
-      name: "Pharmacy",
-      icon: "💊",
-      borderBlockColor: "#3b82f6",
-      backgroundColor: "#dbeafe",
-    },
-  ];
-
   const cleanText = (text) => {
-    console.log("Clean text: " + text);
     return text
       .replace(/\t+/g, " ")    // Tabs to spaces
       .replace(/\s+/g, " ")    // Collapse all whitespace to single space
@@ -84,16 +44,18 @@ const ChatScreen = () => {
 
   // This function would connect to your Python backend
   const sendMessageToBackend = async (userMessage) => {
-    console.log("Function ke andar: " + userMessage);
     try {
       const response = await axios.post("http://192.168.11.209:8000/chat/",
         {
-          session_id: "123",
+          session_id: "1234",
           user_input: userMessage
+        }, 
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-
-      console.log(userMessage);
   
       console.log(response.data.response);
       return cleanText(response.data.response);
@@ -127,10 +89,7 @@ const ChatScreen = () => {
     setMessage("");
     setIsLoading(true);
 
-    console.log(userMessageText);
     const botResponse = await sendMessageToBackend(userMessageText);
-    console.log("Message aaya");
-    
 
     setIsTyping(true);
     setResponseText(botResponse.trim().split(/\s+/).filter(word => word !== ''));
@@ -139,41 +98,9 @@ const ChatScreen = () => {
     saveMessages(botMessageText, "bot");
   };
 
-  const handleDoctor = () => {
-    Animated.parallel([
-      Animated.timing(translateTabY, {
-        toValue: 150, // Move input & tabs DOWN by 100 pixels
-        duration: 500, // Takes 500 milliseconds (0.5 seconds)
-        useNativeDriver: true, // Optimizes performance
-      }),
-      Animated.timing(translateDocY, {
-        toValue: 0, // Fully fades in the doctors' list
-        duration: 500,
-        delay: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  const onClose = () => {
-    Animated.parallel([
-      Animated.timing(translateTabY, {
-        toValue: 0, // Move input & tabs DOWN by 100 pixels
-        duration: 500, // Takes 500 milliseconds (0.5 seconds)
-        delay: 300,
-        useNativeDriver: true, // Optimizes performance
-      }),
-      Animated.timing(translateDocY, {
-        toValue: 500, // Fully fades in the doctors' list
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
   const renderMessage = ({ item }) => {
     const isBot = item.sender === "bot";
-
+  
     return (
       <View
         style={[
@@ -183,18 +110,11 @@ const ChatScreen = () => {
       >
         {item.id === "typing" ? (
           <View style={styles.typingContainer}>
-            {visibleWords.map((word, index) => (
-              <Animated.Text
-                key={index}
-                style={[
-                  styles.botText,
-                  styles.messageText,
-                  { opacity: fadeAnimations.current[index] },
-                ]}
-              >
-                {word}{" "}
-              </Animated.Text>
-            ))}
+            {/* Display visible words with a blinking cursor */}
+            <Text style={[styles.messageText, styles.botText]}>
+              {visibleWords.join(" ")}
+              <View style={styles.blinkingCursor}></View>
+            </Text>
           </View>
         ) : (
           <Text
@@ -210,33 +130,10 @@ const ChatScreen = () => {
     );
   };
 
-  const handleSchedule = (name) => {
-    const newMessage = "Book a session for me with " + name;
-    const userMessageId = Date.now().toString();
-    setChatHistory((prev) => [
-      ...prev,
-      { id: userMessageId, text: newMessage, sender: "user" },
-    ]);
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-
-    setTimeout(() => {
-      const botMessageId = (Date.now() + 1).toString();
-      const text = "Successfully scheduled a session with " + name;
-      setIsTyping(true);
-      setResponseText(text.split(" "));
-
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    }, 2000);
-  };
-
   useEffect(() => {
     if (responseText.length === 0) return;
 
-    fadeAnimations.current = responseText.map(() => new Animated.Value(0));
+    // fadeAnimations.current = responseText.map(() => new Animated.Value(0));
 
     setVisibleWords([]);
 
@@ -248,11 +145,11 @@ const ChatScreen = () => {
         if (i >= totalWords) return prev;
         const newWords = [...prev, responseText[i]];
 
-        Animated.timing(fadeAnimations.current[i], {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }).start();
+        // Animated.timing(fadeAnimations.current[i], {
+        //   toValue: 1,
+        //   duration: 1000,
+        //   useNativeDriver: true,
+        // }).start();
 
         i++;
         return newWords;
@@ -278,11 +175,11 @@ const ChatScreen = () => {
       }
 
       flatListRef.current?.scrollToEnd({ animated: true });
-    }, 70);
+    }, 50);
 
     return () => {
       clearInterval(interval);
-      fadeAnimations.current = []; // Prevent memory leaks
+    //   fadeAnimations.current = []; // Prevent memory leaks
     };
   }, [responseText]);
 
@@ -303,7 +200,7 @@ const ChatScreen = () => {
   }, [])
 
   useEffect(() => {
-    flatListRef.current?.scrollToEnd({ animated: true });
+    flatListRef.current?.scrollToEnd({ animated: false });
 }, [chatHistory]);
 
   return (
@@ -360,6 +257,14 @@ const ChatScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    blinkingCursor: {
+        borderRadius: 10,
+        backgroundColor: "#333",
+        height: 15,
+        width: 15,
+        marginLeft: 5,
+        opacity: 1,
+      },
   container: {
     flex: 1,
     backgroundColor: "#ffff",
@@ -491,4 +396,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default ChatScreenTrial;

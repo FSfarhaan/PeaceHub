@@ -181,15 +181,17 @@ export default function App() {
         <StackNavigator />
         <Toast config={toastConfig} />
       </NavigationContainer>
+      // <ChatScreen />
+      // <Questionnaire />
   );
 }
 
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    bottom: 70, // Adjust based on your tab height
+    bottom: 70,
     right: 20,
-    backgroundColor: "#4B0082", // Customize color
+    backgroundColor: "#4B0082", 
     width: 60,
     height: 60,
     borderRadius: 30,

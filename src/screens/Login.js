@@ -22,8 +22,8 @@ const LoginScreen = ({ navigation }) => {
 
   const handleAuth = async () => {
     const url = isSignup
-      ? "http://192.168.237.209:3001/signup"
-      : "http://192.168.237.209:3001/login";
+      ? "http://192.168.11.209:3001/signup"
+      : "http://192.168.11.209:3001/login";
     const body = isSignup ? { name, email, password } : { email, password };
   
     try {
@@ -65,7 +65,7 @@ const LoginScreen = ({ navigation }) => {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{ name: isSignup ? 'DailyTasks' : 'Initial' }],
+              routes: [{ name: isSignup ? 'Questionnaire' : 'Initial' }],
             })
           );
         }, 200);
