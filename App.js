@@ -17,6 +17,7 @@ import Profile from './src/screens/sideDrawer/Profile';
 import Settings from './src/screens/sideDrawer/Settings';
 import { NavigationContainer } from '@react-navigation/native';
 import MusicPlayerScreen from './src/screens/bottomNavigation/sounds/MusicPlayer';
+import MusicListScreen from './src/screens/bottomNavigation/sounds/MusicListScreen';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import VideoCallScreen from './src/utils/VideoCallScreen';
 import UserProfileScreen from './src/screens/ProfileScreen';
@@ -29,6 +30,8 @@ import DailyTasks from './src/screens/DailyTasks';
 import PatientListScreen from './src/screens/ExpertPortal/PatientsList'
 import ProgressScreen from './src/screens/ExpertPortal/ProgressScreen';
 import { setupNotificationHandlers } from './src/utils/Notifications';
+import JournalList from './src/screens/bottomNavigation/journal/JournalList';
+import NoteScreen from './src/screens/bottomNavigation/journal/NoteScreen';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -91,7 +94,7 @@ function BottomTabs({ navigation }) {
               case "Explore":
                 iconName = "compass";
                 break;
-              case "Experts":
+              case "Consult":
                 iconName = "people";
                 break;
               case "Mindful":
@@ -133,7 +136,7 @@ function BottomTabs({ navigation }) {
       >
         <Tab.Screen name="Dashboard" component={Dashboard}/>
         <Tab.Screen name="Explore" component={Explore}/>
-        <Tab.Screen name="Experts" component={Experts}/>
+        <Tab.Screen name="Consult" component={Experts}/>
         <Tab.Screen name="Mindful" component={Mindful}/>
         <Tab.Screen name="Reports" component={Reports} />
       </Tab.Navigator>
@@ -153,6 +156,7 @@ function StackNavigator() {
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Initial" component={BottomTabs} options={{ headerShown: false }} />
       <Stack.Screen name="MusicPlayer" component={MusicPlayerScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="MusicList" component={MusicListScreen} options={{ title: "Explore Sounds" }} />
       <Stack.Screen name="Doctors List" component={DoctorListScreen} />
       <Stack.Screen name="Doctor Profile" component={DoctorProfileScreen} />
       <Stack.Screen name="liveCall" component={VideoCallScreen} options={{ title: "Live call" }}/>
@@ -163,6 +167,8 @@ function StackNavigator() {
       <Stack.Screen name="DailyTasks" component={DailyTasks} options={{ title: "Daily Tasks" }} />
       <Stack.Screen name="PatientsList" component={PatientListScreen} options={{ title: "Patients List" }} />
       <Stack.Screen name="ProgressScreen" component={ProgressScreen} options={{ title: "Progress" }} />
+      <Stack.Screen name="JournalList" component={JournalList} options={{ title: "Journal" }} />
+      <Stack.Screen name="NoteScreen" component={NoteScreen} options={{ title: "Create Note" }} />
     </Stack.Navigator>
   );
 }

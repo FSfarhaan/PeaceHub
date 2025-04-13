@@ -247,9 +247,9 @@ const Explore = () => {
                 <Text style={styles.greetingText}>Find Your Calm 🎧</Text>
                 <Text style={styles.subGreetingText}>Let nature soothe your mind</Text>
             </View>
-            {/* <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("MusicList")}>
                 <Text style={styles.showAllText}>Show all</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
         </View>
         
         <View style={styles.soundsContainer}>

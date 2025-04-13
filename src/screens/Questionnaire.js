@@ -153,7 +153,7 @@ const Questionnaire = ({ navigation }) => {
   const handleSubmit = async () => {
     console.log('Submitted answers:', answers);
     try {
-      const response = await axios.post("http://192.168.11.209:5000/predict", { responses: answers });
+      const response = await axios.post("http://192.168.210.209:5000/predict", { responses: answers });
       const data = await response.data;
   
       console.log(response.data);

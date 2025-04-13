@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, SafeAreaView, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DoctorCard from '../../components/DoctorCard'
 import { doctorsData } from '../../data/doctorsData';
@@ -8,6 +8,93 @@ import { doctorsData } from '../../data/doctorsData';
 const Experts = ({ navigation }) => {
   // Filter popular doctors
   const popularDoctors = doctorsData.filter(doctor => doctor.isPopular);
+  const emergencyContacts = [
+    {
+      name: 'Kiran Mental Health',
+      number: '1800-599-0019',
+      availability: '24/7',
+      type: 'Government'
+    },
+    {
+      name: 'Tele-MANAS',
+      number: '14416',
+      availability: '24/7',
+      type: 'Government'
+    },
+    {
+      name: 'AASRA',
+      number: '+91 98204 66726',
+      availability: '24/7',
+      type: 'NGO'
+    },
+    {
+      name: 'Samaritans Mumbai',
+      number: '+91 84229 84528',
+      availability: '3 PM – 9 PM, all days',
+      type: 'NGO'
+    },
+    {
+      name: 'Vandrevala Foundation',
+      number: '+91 99996 66555',
+      availability: '24/7',
+      type: 'NGO'
+    },
+    {
+      name: 'iCall (TISS)',
+      number: '+91 9152987821',
+      availability: 'Mon–Sat, 10 AM – 8 PM',
+      type: 'NGO'
+    },
+    {
+      name: 'CHILDLINE India',
+      number: '1098',
+      availability: '24/7',
+      type: 'Child Helpline'
+    }
+  ];
+  
+  const makeCall = (number) => {
+    Linking.openURL(`tel:${number}`);
+  };
+
+  const getColorByType = (type) => {
+    switch (type) {
+      case 'Government':
+        return '#FFF0F0';
+        case 'NGO':
+          return '#E6F0FF';
+      case 'Child Helpline':
+        return '#F0FFF0';
+      default:
+        return '#F5F5F5';
+    }
+  };
+
+  const renderEmergencyButton = (contact, index) => {
+    return (
+      <View key={index} style={[styles.card, { backgroundColor: getColorByType(contact.type) }]}>
+          <View style={styles.cardHeader}>
+            <Ionicons
+              name={contact.type === 'Government' ? 'shield-checkmark' : contact.type === 'Child Helpline' ? 'happy' : 'people'}
+              size={22}
+              color="#555"
+              style={{ marginRight: 6 }}
+            />
+            <Text style={styles.title}>{contact.name}</Text>
+          </View>
+          <Text style={styles.details}>📞 {contact.number}</Text>
+          <Text style={styles.details}>🕒 {contact.availability}</Text>
+          <Text style={styles.details}>{contact.type}</Text>
+          <TouchableOpacity
+            onPress={() => Linking.openURL(`tel:${contact.number}`)}
+            style={styles.callBtn}
+          >
+            <Ionicons name="call" size={18} color="white" />
+            <Text style={styles.callText}>Call</Text>
+          </TouchableOpacity>
+        </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,23 +116,60 @@ const Experts = ({ navigation }) => {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Categories</Text>
+          </View>
+
+          <View style={styles.categoriesContainer}>
+            <TouchableOpacity style={styles.categoryItem}>
+              <View style={[styles.categoryIcon, { backgroundColor: '#FFE6E6' }]}>
+                <Ionicons name="heart-circle" size={24} color="#FF4C4C" />
+              </View>
+              <Text style={styles.categoryText}>Relationship</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.categoryItem}>
+              <View style={[styles.categoryIcon, { backgroundColor: '#FFF5E6' }]}>
+                <Ionicons name="people" size={24} color="#FF8C1A" />
+              </View>
+              <Text style={styles.categoryText}>Childhood</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.categoryItem}>
+              <View style={[styles.categoryIcon, { backgroundColor: '#E6F0FF' }]}>
+                <Ionicons name="sad-outline" size={24} color="#4C74FF" />
+              </View>
+              <Text style={styles.categoryText}>Depression</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.categoryItem}>
+              <View style={[styles.categoryIcon, { backgroundColor: '#E6FFF0' }]}>
+                <Ionicons name="medical" size={24} color="#1ABC9C" />
+              </View>
+              <Text style={styles.categoryText}>Addiction</Text>
+            </TouchableOpacity>
+          </View>
+
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Popular Doctors</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => navigation.navigate('Doctors List')}
             >
               <Text style={styles.seeAllText}>Show All</Text>
             </TouchableOpacity>
           </View>
-          
-          <ScrollView 
-            horizontal 
+
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.doctorsScrollView}
           >
             {popularDoctors.map(doctor => (
               <DoctorCard
-                key={doctor.id} 
-                doctor={doctor} 
+                key={doctor.id}
+                doctor={doctor}
                 onPress={() => navigation.navigate('Doctor Profile', { doctorId: doctor.id })}
               />
             ))}
@@ -54,43 +178,19 @@ const Experts = ({ navigation }) => {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Categories</Text>
-            {/* <TouchableOpacity>
-              <Text style={styles.seeAllText}>See All</Text>
-            </TouchableOpacity> */}
+            <Text style={styles.sectionTitle}>Emergency Contacts</Text>
           </View>
-          
-          <View style={styles.categoriesContainer}>
-            <TouchableOpacity style={styles.categoryItem}>
-              <View style={[styles.categoryIcon, { backgroundColor: '#E6F7FF' }]}>
-                <Ionicons name="heart" size={24} color="#4FADFF" />
-              </View>
-              <Text style={styles.categoryText}>Cardiology</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.categoryItem}>
-              <View style={[styles.categoryIcon, { backgroundColor: '#FFF2E6' }]}>
-                <Ionicons name="medkit" size={24} color="#FF8C4B" />
-              </View>
-              <Text style={styles.categoryText}>Medicine</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.categoryItem}>
-              <View style={[styles.categoryIcon, { backgroundColor: '#E6FFF2' }]}>
-                <Ionicons name="fitness" size={24} color="#4BFF8C" />
-              </View>
-              <Text style={styles.categoryText}>Dentist</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.categoryItem}>
-              <View style={[styles.categoryIcon, { backgroundColor: '#F2E6FF' }]}>
-                <Ionicons name="eye" size={24} color="#8C4BFF" />
-              </View>
-              <Text style={styles.categoryText}>Eye Care</Text>
-            </TouchableOpacity>
-          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesContainer}
+          >
+            {emergencyContacts.map((contact, index) => renderEmergencyButton(contact, index))}
+          </ScrollView>
+
         </View>
-        
+
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Upcoming Appointments</Text>
@@ -100,7 +200,7 @@ const Experts = ({ navigation }) => {
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity> */}
           </View>
-          
+
           <View style={styles.appointmentCard}>
             <View style={styles.appointmentInfo}>
               <Text style={styles.appointmentDate}>Mar 14, 2025 • 10:00 AM</Text>
@@ -219,6 +319,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
   },
+  categoryButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginHorizontal: 6,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
   categoryItem: {
     alignItems: 'center',
     width: '22%',
@@ -232,9 +344,52 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   categoryText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#333',
     textAlign: 'center',
+  },
+  card: {
+    width: 220,
+    padding: 16,
+    borderRadius: 16,
+    marginRight: 12,
+    shadowColor: '#aaa',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    flexWrap: 'wrap',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    flexShrink: 1,
+    color: '#333',
+  },
+  details: {
+    fontSize: 13,
+    marginTop: 2,
+    color: '#555',
+  },
+  callBtn: {
+    marginTop: 10,
+    backgroundColor: '#FF4C4C',
+    paddingVertical: 6,
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+  },
+  callText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 14,
   },
   appointmentCard: {
     backgroundColor: '#FFF',

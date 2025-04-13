@@ -41,7 +41,7 @@ const CommunityChat = ({ route, navigation }) => {
       console.log(text);
 
       const response = await axios.post(
-        "http://192.168.11.209:5001/send_message",
+        "http://192.168.210.209:5001/send_message",
         { message: text },
         { headers: { "Content-Type": "application/json" } }
       );

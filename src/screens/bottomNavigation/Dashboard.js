@@ -130,9 +130,6 @@ const Dashboard = ({ navigation }) => {
               ))}
             </ScrollView>
         </View>
-
-        {/* Space for bottom navigation (not included as requested) */}
-        <View style={styles.bottomSpace} />
       </ScrollView>
 
     </SafeAreaView>
@@ -335,8 +332,7 @@ const styles = StyleSheet.create({
     marginLeft: 3,
   },
   recommendedSection: {
-    marginTop: 30,
-    // paddingHorizontal: 20,
+    marginVertical: 30
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -396,9 +392,6 @@ const styles = StyleSheet.create({
   recommendedCardIconText: {
     fontSize: 18,
   },
-  bottomSpace: {
-    height: 80,
-  }
 });
 
 export default Dashboard;
