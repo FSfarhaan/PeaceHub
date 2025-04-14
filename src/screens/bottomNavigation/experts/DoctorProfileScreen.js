@@ -77,17 +77,17 @@ const DoctorProfileScreen = ({ route, navigation }) => {
               <Text style={styles.specialization}>{doctor.specialization}</Text>
               <Text style={styles.college}>{doctor.designation}</Text>
               
-              {/* <View style={styles.contactButtons}>
-                <TouchableOpacity style={styles.contactButton}>
+              <View style={styles.contactButtons}>
+                {/* <TouchableOpacity style={styles.contactButton}>
                   <Ionicons name="call" size={20} color="#8E67FD" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.contactButton}>
                   <Ionicons name="videocam" size={20} color="#8E67FD" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.contactButton}>
                   <Ionicons name="chatbubble" size={20} color="#8E67FD" />
                 </TouchableOpacity>
-              </View> */}
+              </View>
             </View>
           </View>
           
@@ -236,8 +236,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profileImage: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     borderRadius: 15,
     marginRight: 15,
   },

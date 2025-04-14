@@ -82,8 +82,8 @@ def request_session():
         <p><b>Session Details:</b> {session_details}</p>
         <br>
         <p>Please confirm or decline the request:</p>
-        <a href="http://127.0.0.1:5000/accept/{user_email}" style="padding: 10px 20px; background-color: #28a745; color: #fff; text-decoration: none;">Accept</a>
-        <a href="http://127.0.0.1:5000/reject/{user_email}" style="padding: 10px 20px; background-color: #dc3545; color: #fff; text-decoration: none; margin-left: 10px;">Reject</a>
+        <a href="http://192.168.210.209:5005/accept/{user_email}" style="padding: 10px 20px; background-color: #28a745; color: #fff; text-decoration: none;">Accept</a>
+        <a href="http://192.168.210.209:5005/reject/{user_email}" style="padding: 10px 20px; background-color: #dc3545; color: #fff; text-decoration: none; margin-left: 10px;">Reject</a>
         '''
 
         if send_email(psychologist_email, "New Session Request", email_body):
@@ -95,4 +95,4 @@ def request_session():
 
 # Run the Flask app
 if __name__ == "__main__":
-    app.run(debug=True, port=5005)
+    app.run( debug=True, port=5005 )

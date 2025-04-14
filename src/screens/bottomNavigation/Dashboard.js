@@ -54,6 +54,19 @@ const Dashboard = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
+        <TouchableOpacity style={[styles.dailyThoughtContainer, {backgroundColor: "#A85C8F"}]} onPress={() => navigation.navigate("JournalList")}>
+          <View style={styles.dailyThoughtContent}>
+            <Text style={styles.dailyThoughtTitle}>Today’s Check-In</Text>
+            <Text style={styles.dailyThoughtSubtitle}>A Moment to Reflect</Text>
+          </View>
+
+          <View style={styles.playButtonContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate("JournalList")} style={[styles.playButton, {backgroundColor: "none", height: "auto", width: "auto"}]}>
+              <Text style={[styles.playButtonIcon, { fontSize: 40}]}>🧘🏻</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+
         {/* Main Cards Section */}
         <View style={styles.cardsContainer}>
           {/* First Card - Basics */}
@@ -328,7 +341,7 @@ const styles = StyleSheet.create({
   },
   playButtonIcon: {
     fontSize: 18,
-    color: '#3F414E',
+    // color: '#3F414E',
     marginLeft: 3,
   },
   recommendedSection: {

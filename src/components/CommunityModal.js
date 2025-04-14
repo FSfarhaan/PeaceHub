@@ -7,10 +7,11 @@ const CommunityModal = ({ isVisible, onClose, community, onJoin }) => {
     const [image, setImage] = useState(null);
     useEffect(() => {
         if (community?.image) {
+          console.log(community.image)
             const newImage =
-                community.image === 40 ? require('../../assets/family.jpg') :
-                community.image === 41 ? require('../../assets/selflove.jpg') :
-                community.image === 42 ? require('../../assets/relationship.jpg') :
+                community.image === 44 ? require('../../assets/family.jpg') :
+                community.image === 45 ? require('../../assets/selflove.jpg') :
+                community.image === 46 ? require('../../assets/relationship.jpg') :
                 require('../../assets/career.jpg');
     
             setImage(newImage);

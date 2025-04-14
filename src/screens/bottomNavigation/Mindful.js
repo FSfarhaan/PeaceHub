@@ -177,8 +177,6 @@ const Mindful = () => {
     console.log("Day: " + selectedDay);
     console.log(selectionsArray);
     console.log("Journal: " + journalEntry);
-
-    navigation.navigate("JournalList");
   }
 
   useEffect(() => {
@@ -207,8 +205,7 @@ const Mindful = () => {
                     styles.dayContainer,
                     selectedDay === item.date && styles.selectedDayContainer
                   ]}
-                  onPress={() => setSelectedDay(item.date)}
-                >
+                  onPress={() => setSelectedDay(item.date)} >
                   <Text style={styles.dayText}>{item.day}</Text>
                   <Text style={[
                     styles.dateText,
@@ -218,6 +215,18 @@ const Mindful = () => {
               ))}
             </ScrollView>
           </View>
+
+          <TouchableOpacity style={styles.dailyThoughtContainer} onPress={() => navigation.navigate("JournalList")}>
+            <View style={styles.dailyThoughtContent}>
+              <Text style={styles.dailyThoughtTitle}>Daily Journaling</Text>
+            </View>
+
+            <View style={styles.playButtonContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate("JournalList")} style={styles.playButton}>
+                <Text style={styles.playButtonIcon}>▶</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
 
           {/* Questions Section */}
           <View style={styles.questionsContainer}>
@@ -231,7 +240,7 @@ const Mindful = () => {
             ))}
 
             {/* Journal Entry */}
-            <View style={styles.journalSection}>
+            {/* <View style={styles.journalSection}>
               <Text style={styles.journalTitle}>Today's Reflection</Text>
               <Text style={styles.journalSubtitle}>Write about your thoughts, feelings, and experiences</Text>
               <View style={styles.journalInputContainer}>
@@ -244,11 +253,12 @@ const Mindful = () => {
                   textAlignVertical="top"
                 />
               </View>
-            </View>
+            </View> */}
 
             <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
               <Text style={styles.saveButtonText}>Save Logs</Text>
             </TouchableOpacity>
+
           </View>
         </ScrollView>
 
@@ -351,11 +361,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderBlockColor: '#333',
     borderWidth: .1
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 1 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 2,
-    // elevation: 2,
   },
   selectedEmoji: {
     borderWidth: 2,
@@ -370,6 +375,46 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#555',
     textAlign: 'center',
+  },
+  dailyThoughtContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+    marginHorizontal: 15,
+    padding: 15,
+    backgroundColor: '#8F00FF',
+    borderRadius: 10,
+    height: 75,
+  },
+  dailyThoughtContent: {
+    flex: 1,
+  },
+  dailyThoughtTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  dailyThoughtSubtitle: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    opacity: 0.8,
+    marginTop: 5,
+  },
+  playButtonContainer: {
+    marginLeft: 10,
+  },
+  playButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playButtonIcon: {
+    fontSize: 18,
+    color: '#3F414E',
+    marginLeft: 3,
   },
   journalSection: {
     marginTop: 16,

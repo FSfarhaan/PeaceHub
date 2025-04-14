@@ -1,5 +1,5 @@
 // screens/NoteScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,54 +13,106 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const NoteScreen = ({ route, navigation }) => {
-  const { isNewNote, noteId, title, content } = route.params || {};
+  const { isNewNote, noteId, title, content, date } = route.params || {};
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
-
-  const handleSaveNote = async () => {
-    const note = {
-      title: noteTitle, content: noteContent
-    }
-
-    const response = await axios.post("", note);
-    await response.data;
-  }
+  const [token, setToken] = useState('');  
 
   useEffect(() => {
-    // If editing an existing note, we would load its data
+    const fetchToken = async () => {
+      console.log("Run hua");
+      const token = await AsyncStorage.getItem("token");
+      if(token) setToken(token);
+      console.log(token);
+    }
+    fetchToken();
+  }, []);
+
+  const showToast = (type, message) => {
+      Toast.show({
+        type: type, // 'success' | 'error' | 'info'
+        text1: message,
+        position: 'top',
+        visibilityTime: 3000, // 3 seconds
+      });
+    };
+
+  const handleSaveNote = async () => {
+    console.log(token + "  " + noteTitle + "  " + noteContent);
+    if (!token || !noteTitle || !noteContent) return;
+  
+    const note = {
+      title: noteTitle,
+      content: noteContent
+    };
+
+    console.log(noteId);
+  
+    const url = isNewNote 
+      ? "http://192.168.210.209:3001/api/journal"  // Replace with your local IP
+      : `http://192.168.210.209:3001/api/journal/${noteId}`;
+  
+    const method = isNewNote ? "post" : "put";
+  
+    try {
+      const response = await axios({
+        method,
+        url,
+        data: note,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      console.log(response.data);
+  
+      showToast("success", isNewNote ? "Created Sucessfully" : "Updated Sucessfully");
+  
+      setTimeout(() => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1, // Show JournalList (second in array)
+            routes: [
+              { name: 'Initial' },
+              { name: 'JournalList' }
+            ],
+          })
+        );
+      }, 200);
+  
+    } catch (err) {
+      console.error("Error saving note:", err.message);
+      showToast("error", err.message);
+    }
+  };
+
+  navigation.setOptions({
+    headerRight: () => (
+      <TouchableOpacity style={styles.bellButton} onPress={handleSaveNote}>
+        <Ionicons name="checkmark" size={28} color="#8E67FD" />
+      </TouchableOpacity>
+    ),
+  });
+  
+
+  useEffect(() => {
     if (noteId && !isNewNote) {
-      // In a real app, we would fetch the note data here
-      // For now, we'll just set a placeholder title if provided
       if (title && content) {
         setNoteTitle(title);
         setNoteContent(content);
       }
-    }
-
-    // Set up navigation header back button
-    navigation.setOptions({
-      // headerLeft: () => (
-      //   <TouchableOpacity 
-      //     style={styles.backButton} 
-      //     onPress={() => navigation.goBack()}
-      //   >
-      //     <Feather name="chevron-left" size={24} color="#20B2AA" />
-      //   </TouchableOpacity>
-      // ),
-      headerRight: () => (
-        <TouchableOpacity style={styles.bellButton} onPress={handleSaveNote}>
-          <Ionicons name="checkmark" size={28} color="#8E67FD" />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, noteId, isNewNote, title]);
+    } 
+  }, [navigation, token]);
 
   return (
     <SafeAreaView style={styles.container}>
 
-<View style={{ padding: 20, paddingBottom: 0 }}>
+      <View style={{ padding: 20, paddingBottom: 0 }}>
         <TextInput
           style={styles.titleInput}
           placeholder="Today’s Reflection"
@@ -68,9 +120,9 @@ const NoteScreen = ({ route, navigation }) => {
           onChangeText={setNoteTitle}
           placeholderTextColor="#888"
         />
-        <View style={{ height: .4, width: "100%", backgroundColor: "#333", marginBottom: 5 }} />
-        <Text style={{ marginLeft: 5, color: "gray"}}>20/3/25 | 5:09 pm</Text>
-        </View>
+        <View style={{ height: .4, width: "100%", backgroundColor: "#333", marginBottom: date ? 5 : 0 }} />
+        {date && <Text style={{ marginLeft: 5, color: "gray" }}>{date}</Text>}
+      </View>
 
       <ScrollView style={styles.scrollView}>
 

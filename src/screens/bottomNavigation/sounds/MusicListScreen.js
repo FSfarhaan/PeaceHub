@@ -71,7 +71,7 @@ const MusicListScreen = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
 
         <View style={styles.greetingContainer}>
-          <Text style={styles.greetingText}>Find Calming Sounds 🧑‍⚕️</Text>
+          <Text style={styles.greetingText}>Find Calming Sounds 🎶</Text>
           <Text style={styles.subGreetingText}>Find the right sound for you</Text>
         </View>
 

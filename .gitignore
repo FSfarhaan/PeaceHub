@@ -36,5 +36,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+python/chat_logs
+
 MyApp
 backend
