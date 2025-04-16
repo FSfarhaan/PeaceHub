@@ -27,7 +27,7 @@ const DoctorProfileScreen = ({ route, navigation }) => {
       const payload = `An appointment for ${selectedAppointmentType} has been requested on ${selectedDay}, ${selectedDate} at ${selectedTime}.`;
 
       const user_email = "farhaan8d@gmail.com";
-      const psychologist_email = "bhoomiajay13@gmail.com";
+      const psychologist_email = "fsfarhaanshaikh7@gmail.com";
       const session_details = payload;
 
       const response = await axios.post("http://192.168.210.209:5005/request-session", {

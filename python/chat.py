@@ -5,10 +5,12 @@ import requests
 import json
 import os
 import uuid
-import re
+from dotenv import load_dotenv
 
-GROQ_API_KEY = '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'
-GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+load_dotenv()
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_URL = os.getenv("GROQ_API_URL")
 MAX_HISTORY_LENGTH = 10
 
 

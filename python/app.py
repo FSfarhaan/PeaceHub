@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
-from flask import Flask, render_template, request
-from flask_cors import CORS
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.linear_model import LogisticRegression
@@ -30,11 +32,18 @@ X_test_scaled = scaler.transform(X_test)
 logreg = LogisticRegression(random_state=42)
 logreg.fit(X_train_scaled, y_train)
 
-# Flask application setup
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all routes & origins
+# Step 7: Initialize FastAPI app
+app = FastAPI()
 
-# Questions to ask the user
+# Step 8: Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+# Step 9: Questions (optional if you want to use later)
 questions = [
     "During the past week, how often have you been bothered by feeling down, depressed, or hopeless?",
     "During the past week, how often have you had little interest or pleasure in doing things?",
@@ -58,16 +67,18 @@ questions = [
     "During the past week, how often have you felt that life is not worth living?"
 ]
 
-from flask import Flask, request, jsonify
+# Step 10: Request schema
+class PredictRequest(BaseModel):
+    responses: List[int]
 
-@app.route('/predict', methods=['POST'])
-def predict():
+# Step 11: Predict route
+@app.post("/predict")
+async def predict(payload: PredictRequest):
     try:
-        # Step 8: Get user input from JSON request
-        user_responses = request.json.get("responses", [])
+        user_responses = payload.responses
 
         if len(user_responses) != 20:
-            return jsonify({"error": "Exactly 20 responses are required."}), 400
+            return {"error": "Exactly 20 responses are required."}
 
         # Create a DataFrame for the input
         user_data = pd.DataFrame([user_responses], columns=Features)
@@ -75,11 +86,11 @@ def predict():
         # Scale the user input
         user_data_scaled = scaler.transform(user_data)
 
-        # Predict the depression level based on user input
+        # Predict the depression level
         predicted_result = logreg.predict(user_data_scaled)
         depression_level = label_encoder.inverse_transform(predicted_result)[0]
 
-        # Provide feedback based on prediction
+        # Feedback based on prediction
         descriptions = {
             "Severe": "You may be experiencing significant depressive symptoms. Consider reaching out to a mental health professional for support.",
             "Moderate": "You may be experiencing moderate depressive symptoms. It's important to talk to someone about how you're feeling.",
@@ -87,25 +98,12 @@ def predict():
             "No Depression": "You appear to be in a good mental state. Keep maintaining healthy habits!"
         }
 
-        # Show the description
         feedback = descriptions.get(depression_level, "No description available.")
 
-        # Return JSON response
-        return jsonify({
+        return {
             "depression_level": depression_level,
             "feedback": feedback
-        })
+        }
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
-
-
-
-
-
-
-
+        return {"error": str(e)}

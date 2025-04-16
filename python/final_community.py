@@ -1,23 +1,53 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import json
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+import uvicorn
 
 nltk.download('vader_lexicon')
-
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
-
 sia = SentimentIntensityAnalyzer()
 
-# User class
+app = FastAPI()
+
+# Allow all CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ----- Data Models -----
+class CreateCommunityRequest(BaseModel):
+    community_name: str
+    username: str
+    role: str = "member"
+
+class AddMemberRequest(BaseModel):
+    community_name: str
+    username: str
+    role: str = "member"
+
+class SendMessageRequest(BaseModel):
+    message: str
+
+class LeaveCommunityRequest(BaseModel):
+    community_name: str
+    username: str
+
+class RemoveMemberRequest(BaseModel):
+    community_name: str
+    admin_username: str
+    member_username: str
+
+# ----- User and Community Classes -----
 class User:
     def __init__(self, username, role="member"):
         self.username = username
         self.role = role
 
-# Community class
 class Community:
     def __init__(self, name):
         self.name = name
@@ -25,14 +55,14 @@ class Community:
         self.members = []
         self.load_messages()
         self.load_members()
-    
+
     def add_member(self, user):
         if not any(member.username == user.username for member in self.members):
             self.members.append(user)
             self.save_members()
             return f"{user.username} added to the community as {user.role}."
         return f"User {user.username} is already a member of the community."
-    
+
     def add_message(self, user, message):
         if any(member.username == user.username for member in self.members):
             self.messages.append(f"{user.username}: {message}")
@@ -66,7 +96,7 @@ class Community:
         self.members = [member for member in self.members if member.username != username]
         self.save_members()
         return f"{username} has left the community."
-    
+
     def remove_member(self, admin_username, member_username):
         admin = next((member for member in self.members if member.username == admin_username and member.role == 'admin'), None)
         if admin:
@@ -78,7 +108,7 @@ class Community:
     def save_messages(self):
         with open(f"{self.name}_messages.json", "w") as file:
             json.dump(self.messages, file)
-    
+
     def load_messages(self):
         try:
             with open(f"{self.name}_messages.json", "r") as file:
@@ -98,74 +128,58 @@ class Community:
         except FileNotFoundError:
             self.members = []
 
-# Global communities dictionary
+# ----- In-memory storage -----
 communities = {}
 
-@app.route('/create_community', methods=['POST'])
-def create_community():
-    data = request.json
-    community_name = data['community_name']
-    username = data['username']
-    role = data.get('role', 'member')
+# ----- Routes -----
+@app.post("/create_community")
+async def create_community(data: CreateCommunityRequest):
+    if data.community_name in communities:
+        raise HTTPException(status_code=400, detail="Community already exists.")
     
-    if community_name in communities:
-        return jsonify({"message": "Community already exists."}), 400
+    communities[data.community_name] = Community(data.community_name)
+    user = User(data.username, data.role)
+    communities[data.community_name].add_member(user)
+    return {"message": f"Community '{data.community_name}' created and {data.username} joined as {data.role}."}
 
-    communities[community_name] = Community(community_name)
-    user = User(username, role)
-    communities[community_name].add_member(user)
-    return jsonify({"message": f"Community '{community_name}' created and {username} joined as {role}."})
-
-@app.route('/add_member', methods=['POST'])
-def add_member():
-    data = request.json
-    community_name = data['community_name']
-    username = data['username']
-    role = data.get('role', 'member')
+@app.post("/add_member")
+async def add_member(data: AddMemberRequest):
+    if data.community_name not in communities:
+        raise HTTPException(status_code=404, detail="Community not found.")
     
-    if community_name not in communities:
-        return jsonify({"message": "Community not found."}), 404
-    
-    user = User(username, role)
-    response = communities[community_name].add_member(user)
-    return jsonify({"message": response})
+    user = User(data.username, data.role)
+    response = communities[data.community_name].add_member(user)
+    return {"message": response}
 
-@app.route('/send_message', methods=['POST'])
-def send_message():
-    data = request.json
-    message = data['message']
-
-    sentiment_score = sia.polarity_scores(message)['compound']
+@app.post("/send_message")
+async def send_message(data: SendMessageRequest):
+    sentiment_score = sia.polarity_scores(data.message)['compound']
     if sentiment_score < 0:
-        return jsonify({"message": "Negative messages are not allowed in the community. Please rephrase your message.", "score": sentiment_score})
+        return {
+            "message": "Negative messages are not allowed in the community. Please rephrase your message.",
+            "score": sentiment_score
+        }
+    return {
+        "message": "Message sent successfully.",
+        "score": sentiment_score
+    }
+
+@app.post("/leave_community")
+async def leave_community(data: LeaveCommunityRequest):
+    if data.community_name not in communities:
+        raise HTTPException(status_code=404, detail="Community not found.")
     
-    return jsonify({"message": "Message sent successfully.", "score": sentiment_score})
+    response = communities[data.community_name].leave_community(data.username)
+    return {"message": response}
 
-@app.route('/leave_community', methods=['POST'])
-def leave_community():
-    data = request.json
-    community_name = data['community_name']
-    username = data['username']
+@app.post("/remove_member")
+async def remove_member(data: RemoveMemberRequest):
+    if data.community_name not in communities:
+        raise HTTPException(status_code=404, detail="Community not found.")
+    
+    response = communities[data.community_name].remove_member(data.admin_username, data.member_username)
+    return {"message": response}
 
-    if community_name not in communities:
-        return jsonify({"message": "Community not found."}), 404
-
-    response = communities[community_name].leave_community(username)
-    return jsonify({"message": response})
-
-@app.route('/remove_member', methods=['POST'])
-def remove_member():
-    data = request.json
-    community_name = data['community_name']
-    admin_username = data['admin_username']
-    member_username = data['member_username']
-
-    if community_name not in communities:
-        return jsonify({"message": "Community not found."}), 404
-
-    response = communities[community_name].remove_member(admin_username, member_username)
-    return jsonify({"message": response})
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
-
+# ----- Uvicorn Runner (optional if using command line) -----
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=5001, reload=True)

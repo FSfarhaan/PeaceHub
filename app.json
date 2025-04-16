@@ -34,8 +34,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -46,8 +45,7 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
       ],
-      "package": "com.fsfarhaanshaikh7.peacehub",
-      "googleServicesFile": "./google-services.json"
+      "package": "com.fsfarhaanshaikh7.peacehub"
     },
     "web": {
       "favicon": "./assets/favicon.png"
