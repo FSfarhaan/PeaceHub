@@ -1,66 +1,14 @@
+from fastapi import APIRouter, HTTPException
+from models.mail_model import SessionRequest
+from helpers.mail_functions import send_email
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
-
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
-# Load environment variables
 load_dotenv()
+IP_ADDRESS = os.getenv("IP_ADDRESS")
 
-# Email Configuration
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")  # Your email
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")  # Your email password or app-specific password
+router = APIRouter()
 
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-
-# Initialize FastAPI app
-app = FastAPI()
-
-# Enable CORS for all routes
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Pydantic model for session request
-class SessionRequest(BaseModel):
-    user_email: str
-    psychologist_email: str
-    session_details: str
-
-# Function to send an email
-def send_email(to_email: str, subject: str, body: str) -> bool:
-    msg = MIMEMultipart()
-    msg["From"] = EMAIL_ADDRESS
-    msg["To"] = to_email
-    msg["Subject"] = subject
-    msg.attach(MIMEText(body, "html"))
-
-    try:
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.send_message(msg)
-        return True
-    except Exception as e:
-        print(f"❌ Error sending email: {e}")
-        return False
-
-# Root endpoint
-@app.get("/")
-async def root():
-    return {"message": "Hello"}
-
-# Accept Session Endpoint
-@app.get("/accept/{user_email}")
+@router.get("/accept/{user_email}")
 async def accept_session(user_email: str):
     subject = "✅ Session Confirmed"
     body = "Your session request has been accepted! 🎉"
@@ -70,8 +18,7 @@ async def accept_session(user_email: str):
     else:
         raise HTTPException(status_code=500, detail="Failed to send confirmation email")
 
-# Reject Session Endpoint
-@app.get("/reject/{user_email}")
+@router.get("/reject/{user_email}")
 async def reject_session(user_email: str):
     subject = "❌ Session Declined"
     body = "Unfortunately, your session request has been declined."
@@ -81,16 +28,15 @@ async def reject_session(user_email: str):
     else:
         raise HTTPException(status_code=500, detail="Failed to send rejection email")
 
-# Send Session Request Email
-@app.post("/request-session")
+@router.post("/request-session")
 async def request_session(request: SessionRequest):
     try:
         user_email = request.user_email
         psychologist_email = request.psychologist_email
         session_details = request.session_details
 
-        accept_url = f"http://192.168.198.209:5005/accept/{user_email}"
-        reject_url = f"http://192.168.198.209:5005/reject/{user_email}"
+        accept_url = f"{IP_ADDRESS}:5005/accept/{user_email}"
+        reject_url = f"{IP_ADDRESS}:5005/reject/{user_email}"
 
         email_body = f'''
         <h2>Session Request</h2>

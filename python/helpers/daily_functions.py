@@ -1,21 +1,7 @@
-from fastapi import FastAPI, Request
-from pydantic import BaseModel
-from typing import List, Optional
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime
 
-app = FastAPI()
-
 analyzer = SentimentIntensityAnalyzer()
-
-# Pydantic models for request body
-class ChatbotInteraction(BaseModel):
-    user_response: str
-
-class AnalyzeRequest(BaseModel):
-    data: List[List[Optional[float]]]  # e.g., [[1, 3.5], [2, 2.8]]
-    journal_entry: str
-    chatbot_interactions: List[ChatbotInteraction]
 
 def calculate_daily_score(data):
     scores = [item[1] for item in data if item[1] is not None]
@@ -57,15 +43,3 @@ def process_daily_input(data, journal_entry, chatbot_interactions):
     overall_score = generate_overall_score(data, journal_entry, chatbot_interactions)
     sentiment = generate_overall_sentiment(overall_score)
     return {"date": date, "overall_score": overall_score, "sentiment": sentiment}
-
-@app.post("/analyze")
-async def analyze(request_data: AnalyzeRequest):
-    try:
-        result = process_daily_input(
-            request_data.data,
-            request_data.journal_entry,
-            request_data.chatbot_interactions
-        )
-        return result
-    except Exception as e:
-        return {"error": str(e)}

@@ -71,7 +71,7 @@ const ChatScreenTrial = () => {
     //   ...prevHistory,
     //   { id: sender === "bot" ? "typing" : Date.now().toString(), text, sender },
     // ]);
-    const response = await axios.post("http://192.168.210.209:3001/bot-chat", { text, sender });
+    const response = await axios.post("http://192.168.210.209:3000/bot-chat", { text, sender });
     const data = response.data;
     console.log(data.message);
   }
@@ -186,7 +186,7 @@ const ChatScreenTrial = () => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-          const response = await axios.get("http://192.168.210.209:3001/getMessages");
+          const response = await axios.get("http://192.168.210.209:3000/getMessages");
           const data = response.data;
           // console.log(data.messages);
 
