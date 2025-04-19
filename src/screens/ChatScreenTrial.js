@@ -45,7 +45,7 @@ const ChatScreenTrial = () => {
   // This function would connect to your Python backend
   const sendMessageToBackend = async (userMessage) => {
     try {
-      const response = await axios.post("http://192.168.210.209:8000/chat/",
+      const response = await axios.post("http://192.168.198.209:8000/chat/",
         {
           session_id: "1234",
           user_input: userMessage
@@ -71,7 +71,7 @@ const ChatScreenTrial = () => {
     //   ...prevHistory,
     //   { id: sender === "bot" ? "typing" : Date.now().toString(), text, sender },
     // ]);
-    const response = await axios.post("http://192.168.210.209:3000/bot-chat", { text, sender });
+    const response = await axios.post("http://192.168.198.209:3000/bot-chat", { text, sender });
     const data = response.data;
     console.log(data.message);
   }
@@ -186,7 +186,7 @@ const ChatScreenTrial = () => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-          const response = await axios.get("http://192.168.210.209:3000/getMessages");
+          const response = await axios.get("http://192.168.198.209:3000/getMessages");
           const data = response.data;
           // console.log(data.messages);
 

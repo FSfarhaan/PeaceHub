@@ -30,7 +30,7 @@ const DoctorProfileScreen = ({ route, navigation }) => {
       const psychologist_email = "fsfarhaanshaikh7@gmail.com";
       const session_details = payload;
 
-      const response = await axios.post("http://192.168.210.209:5005/request-session", {
+      const response = await axios.post("http://192.168.198.209:5005/request-session", {
         user_email, psychologist_email, session_details
       });
 

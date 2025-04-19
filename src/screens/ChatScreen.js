@@ -86,7 +86,7 @@ const ChatScreen = () => {
   const sendMessageToBackend = async (userMessage) => {
     console.log("Function ke andar: " + userMessage);
     try {
-      const response = await axios.post("http://192.168.210.209:8000/chat/",
+      const response = await axios.post("http://192.168.198.209:8000/chat/",
         {
           session_id: "123",
           user_input: userMessage
@@ -109,7 +109,7 @@ const ChatScreen = () => {
     //   ...prevHistory,
     //   { id: sender === "bot" ? "typing" : Date.now().toString(), text, sender },
     // ]);
-    const response = await axios.post("http://192.168.210.209:3000/api/bot/bot-chat", { text, sender });
+    const response = await axios.post("http://192.168.198.209:3000/api/bot/bot-chat", { text, sender });
     const data = response.data;
     console.log(data.message);
   }
@@ -289,7 +289,7 @@ const ChatScreen = () => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-          const response = await axios.get("http://192.168.210.209:3000/api/bot/bot-chat");
+          const response = await axios.get("http://192.168.198.209:3000/api/bot/bot-chat");
           const data = response.data;
           // console.log(data.messages);
 

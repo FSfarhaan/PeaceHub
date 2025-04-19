@@ -54,7 +54,7 @@ const Dashboard = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={[styles.dailyThoughtContainer, {backgroundColor: "#A85C8F"}]} onPress={() => navigation.navigate("JournalList")}>
+        <TouchableOpacity style={[styles.dailyThoughtContainer, {backgroundColor: "#A85C8F"}]} onPress={() => navigation.navigate("Mindful")}>
           <View style={styles.dailyThoughtContent}>
             <Text style={styles.dailyThoughtTitle}>Today’s Check-In</Text>
             <Text style={styles.dailyThoughtSubtitle}>A Moment to Reflect</Text>

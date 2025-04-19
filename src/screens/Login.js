@@ -79,8 +79,8 @@ const LoginScreen = ({ navigation }) => {
 
   const handleAuth = async () => {
     const url = isSignup
-      ? "http://192.168.210.209:3000/api/auth/signup"
-      : "http://192.168.210.209:3000/api/auth/login";
+      ? "http://192.168.198.209:3000/api/auth/signup"
+      : "http://192.168.198.209:3000/api/auth/login";
     const body = isSignup ? { name, email, password } : { email, password };
 
     try {

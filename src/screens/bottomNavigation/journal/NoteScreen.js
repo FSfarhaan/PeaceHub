@@ -54,8 +54,8 @@ const NoteScreen = ({ route, navigation }) => {
     console.log(noteId);
   
     const url = isNewNote 
-      ? "http://192.168.210.209:3000/api/journal"  // Replace with your local IP
-      : `http://192.168.210.209:3000/api/journal/${noteId}`;
+      ? "http://192.168.198.209:3000/api/journal"  // Replace with your local IP
+      : `http://192.168.198.209:3000/api/journal/${noteId}`;
   
     const method = isNewNote ? "post" : "put";
   

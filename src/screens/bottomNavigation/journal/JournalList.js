@@ -56,7 +56,7 @@ const JournalList = ({ navigation }) => {
     // console.log(token);
     try {
       const response = await axios.get(
-        "http://192.168.210.209:3000/api/journal",
+        "http://192.168.198.209:3000/api/journal",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -164,7 +164,7 @@ const JournalList = ({ navigation }) => {
   const handleDelete = async (noteId) => {
     try {
       // Call your delete API here
-      await axios.delete(`http://192.168.210.209:3000/api/journal/${noteId}`, {
+      await axios.delete(`http://192.168.198.209:3000/api/journal/${noteId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
