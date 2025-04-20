@@ -1,13 +1,14 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { WebView } from "react-native-webview";
 
 export default function VideoCallScreen() {
-  const jitsiURL = "https://meet.jit.si/YourMeetingName"; // Change this to your meeting name
+  // const jitsiURL = "https://meet.jit.si/YourMeetingName"; // Change this to your meeting name
 
   return (
     <View style={styles.container}>
-      <WebView source={{ uri: jitsiURL }} style={styles.webview} />
+      <Text>hello</Text>
+      {/* <WebView source={{ uri: jitsiURL }} style={styles.webview} /> */}
     </View>
   );
 }
